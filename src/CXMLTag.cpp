@@ -1,7 +1,9 @@
-#include "CXMLI.h"
+#include <CXMLLib.h>
+#include <CFuncs.h>
+#include <algorithm>
 
 CXMLTag::
-CXMLTag(CXMLTag *parent, const string &name, const CXMLTag::OptionArray &options) :
+CXMLTag(CXMLTag *parent, const std::string &name, const CXMLTag::OptionArray &options) :
  parent_(parent), name_(name), options_(), children_(), preserveSpace_(false),
  line_num_(0), char_num_(0)
 {
@@ -18,8 +20,7 @@ CXMLTag(CXMLTag *parent, const string &name, const CXMLTag::OptionArray &options
                options[i]->getValue() == "")
         preserveSpace_ = false;
       else
-        cerr << "Invalid value " << options[i]->getValue() <<
-                "for xml:space" << endl;
+        std::cerr << "Invalid value " << options[i]->getValue() << "for xml:space" << std::endl;
     }
     else if (options[i]->getName() == "xml:lang")
       ;
@@ -59,11 +60,11 @@ getDepth() const
   return depth;
 }
 
-string
+std::string
 CXMLTag::
-getText() const
+getText(bool recurse) const
 {
-  string str;
+  std::string str;
 
   uint num_children = getNumChildren();
 
@@ -76,9 +77,11 @@ getText() const
       str += text->getText();
     }
     else if (token->isTag()) {
-      CXMLTag *tag = token->getTag();
+      if (recurse) {
+        CXMLTag *tag = token->getTag();
 
-      str += tag->getText();
+        str += tag->getText();
+      }
     }
   }
 
@@ -94,7 +97,7 @@ addChild(CXMLToken *child)
 
 bool
 CXMLTag::
-find(const string &def, string &value)
+find(const std::string &def, std::string &value)
 {
   CXMLFindVisitor visitor(this, def);
 
@@ -103,15 +106,14 @@ find(const string &def, string &value)
 
 void
 CXMLTag::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   int num_options = getNumOptions();
 
   os << "<" << name_;
 
   for (int i = 0; i < num_options; ++i)
-    os << " " << getOption(i)->getName () <<
-          "=\"" << getOption(i)->getValue() << "\"";
+    os << " " << getOption(i)->getName () << "=\"" << getOption(i)->getValue() << "\"";
 
   int num_children = getNumChildren();
 
@@ -119,16 +121,16 @@ print(ostream &os) const
     os << ">";
 
     for (int i = 0; i < num_children; ++i)
-      os << endl << "  " << *getChild(i);
+      os << std::endl << "  " << *getChild(i);
 
-    os << endl << "</" << name_ << ">";
+    os << std::endl << "</" << name_ << ">";
   }
   else
     os << "/>";
 }
 
-ostream &
-operator<<(ostream &os, const CXMLTag &tag)
+std::ostream &
+operator<<(std::ostream &os, const CXMLTag &tag)
 {
   tag.print(os);
 
@@ -138,14 +140,14 @@ operator<<(ostream &os, const CXMLTag &tag)
 //------
 
 CXMLTagOption::
-CXMLTagOption(const string &name, const string &value) :
+CXMLTagOption(const std::string &name, const std::string &value) :
  name_(name), value_(value)
 {
 }
 
 void
 CXMLTagOption::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << name_ << "=\"" << value_ << "\"";
 }

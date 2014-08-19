@@ -11,9 +11,6 @@ class CXMLTagTokens {
 
   typedef TokenArray::const_iterator const_iterator;
 
- private:
-  TokenArray tokens_;
-
  public:
   CXMLTagTokens();
  ~CXMLTagTokens();
@@ -28,13 +25,12 @@ class CXMLTagTokens {
   const CXMLToken *operator[](int i) const { return tokens_[i]; }
 
   void clear();
+
+ private:
+  TokenArray tokens_;
 };
 
 class CXMLTagOption {
- private:
-  std::string name_;
-  std::string value_;
-
  public:
   CXMLTagOption(const std::string &name, const std::string &value);
 
@@ -50,21 +46,16 @@ class CXMLTagOption {
 
     return os;
   }
+
+ private:
+  std::string name_;
+  std::string value_;
 };
 
 class CXMLTag {
  public:
   typedef std::vector<CXMLTagOption *> OptionArray;
   typedef std::vector<CXMLToken *>     TokenArray;
-
- private:
-  CXMLTag       *parent_;
-  std::string    name_;
-  OptionArray    options_;
-  CXMLTagTokens  children_;
-  bool           preserveSpace_;
-  int            line_num_;
-  int            char_num_;
 
  public:
   CXMLTag(CXMLTag *parent, const std::string &name, const OptionArray &options);
@@ -94,7 +85,7 @@ class CXMLTag {
 
   int getDepth() const;
 
-  std::string getText() const;
+  std::string getText(bool recurse=true) const;
 
   void addChild(CXMLToken *child);
 
@@ -117,6 +108,15 @@ class CXMLTag {
  private:
   CXMLTag(const CXMLTag &rhs);
   CXMLTag &operator=(const CXMLTag &rhs);
+
+ private:
+  CXMLTag       *parent_;
+  std::string    name_;
+  OptionArray    options_;
+  CXMLTagTokens  children_;
+  bool           preserveSpace_;
+  int            line_num_;
+  int            char_num_;
 };
 
 #endif

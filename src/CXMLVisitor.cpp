@@ -3,10 +3,6 @@
 #include <CXMLToken.h>
 #include <CXMLText.h>
 
-using std::string;
-using std::cerr;
-using std::endl;
-
 bool
 CXMLVisitor::
 process()
@@ -96,15 +92,14 @@ subProcess(CXMLTag *tag)
 
 void
 CXMLVisitor::
-error(CXMLTag *tag, const string &msg) const
+error(CXMLTag *tag, const std::string &msg) const
 {
   int line_num, char_num;
 
   tag->getLocation(&line_num, &char_num);
 
-  cerr << "Tag<" << tag->getName() << "> " <<
-          line_num << ":" << char_num << ") " <<
-          msg << endl;
+  std::cerr << "Tag<" << tag->getName() << "> " << line_num << ":" << char_num << ") " <<
+               msg << std::endl;
 }
 
 //-------------------
@@ -133,7 +128,7 @@ bool
 CXMLPrintVisitor::
 processTagOptionsEnd(CXMLTag *)
 {
-  os_ << ">" << endl;
+  os_ << ">" << std::endl;
 
   ++depth_;
 
@@ -153,7 +148,7 @@ processTagChildText(CXMLText *child_text)
 {
   prefix();
 
-  os_ << child_text->getText() << endl;
+  os_ << child_text->getText() << std::endl;
 
   return true;
 }
@@ -167,7 +162,7 @@ processTagEnd(CXMLTag *tag)
 
   prefix();
 
-  os_ << "</" << tag->getName() << ">" << endl;
+  os_ << "</" << tag->getName() << ">" << std::endl;
 
   return true;
 }
@@ -184,7 +179,7 @@ prefix()
 
 bool
 CXMLFindVisitor::
-find(string &value)
+find(std::string &value)
 {
   process();
 

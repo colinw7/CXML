@@ -1,7 +1,7 @@
-#include "CXMLI.h"
+#include <CXMLLib.h>
 
 CXMLExecute::
-CXMLExecute(const string &id) :
+CXMLExecute(const std::string &id) :
  id_(id), options_()
 {
 }
@@ -15,13 +15,13 @@ addOption(const std::string &name, const std::string &value)
 
 void
 CXMLExecute::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << id_;
 }
 
-ostream &
-operator<<(ostream &os, const CXMLExecute &exec)
+std::ostream &
+operator<<(std::ostream &os, const CXMLExecute &exec)
 {
   exec.print(os);
 

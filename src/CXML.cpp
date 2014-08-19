@@ -1,4 +1,5 @@
-#include "CXMLI.h"
+#include <CXMLLib.h>
+#include <CStrUtil.h>
 
 CXML::
 CXML() :
@@ -25,7 +26,7 @@ addToken(CXMLToken *token)
 
 bool
 CXML::
-read(const string &filename, CXMLTag **tag)
+read(const std::string &filename, CXMLTag **tag)
 {
   CXMLParser parser(*this);
 
@@ -36,7 +37,7 @@ read(const string &filename, CXMLTag **tag)
 
 bool
 CXML::
-readString(const string &str, CXMLTag **tag)
+readString(const std::string &str, CXMLTag **tag)
 {
   CXMLParser parser(*this);
 
@@ -47,35 +48,35 @@ readString(const string &str, CXMLTag **tag)
 
 bool
 CXML::
-find(CXMLTag *tag, const string &def, string &value)
+find(CXMLTag *tag, const std::string &def, std::string &value)
 {
   return tag->find(def, value);
 }
 
 CXMLComment *
 CXML::
-createComment(const string &str) const
+createComment(const std::string &str) const
 {
   return factory_->createComment(str);
 }
 
 CXMLTag *
 CXML::
-createTag(CXMLTag *parent, const string &name, CXMLTag::OptionArray &options) const
+createTag(CXMLTag *parent, const std::string &name, CXMLTag::OptionArray &options) const
 {
   return factory_->createTag(parent, name, options);
 }
 
 CXMLTagOption *
 CXML::
-createTagOption(const string &name, const string &value) const
+createTagOption(const std::string &name, const std::string &value) const
 {
   return factory_->createTagOption(name, value);
 }
 
 CXMLText *
 CXML::
-createText(const string &str) const
+createText(const std::string &str) const
 {
   return factory_->createText(str);
 }
@@ -84,7 +85,7 @@ createText(const string &str) const
 
 bool
 CXML::
-write(const string &filename, const CXMLTag *tag)
+write(const std::string &filename, const CXMLTag *tag)
 {
   CFile file(filename);
 
@@ -98,7 +99,7 @@ write(const string &filename, const CXMLTag *tag)
 
 void
 CXML::
-writeToken(CFile *file, const CXMLToken *token, const string &prefix)
+writeToken(CFile *file, const CXMLToken *token, const std::string &prefix)
 {
   if      (token->isTag()) {
     CXMLTag *child_tag = token->getTag();
@@ -119,7 +120,7 @@ writeToken(CFile *file, const CXMLToken *token, const string &prefix)
 
 void
 CXML::
-writeTag(CFile *file, const CXMLTag *tag, const string &prefix)
+writeTag(CFile *file, const CXMLTag *tag, const std::string &prefix)
 {
   file->write(CStrUtil::strprintf("%s<%s", prefix.c_str(), tag->getName().c_str()));
 
@@ -137,7 +138,7 @@ writeTag(CFile *file, const CXMLTag *tag, const string &prefix)
   if (! children.empty()) {
     file->write(">\n");
 
-    string prefix1 = prefix + "  ";
+    std::string prefix1 = prefix + "  ";
 
     for (uint i = 0; i < children.size(); ++i) {
       const CXMLToken *child_token = children[i];
@@ -153,16 +154,16 @@ writeTag(CFile *file, const CXMLTag *tag, const string &prefix)
 
 void
 CXML::
-writeText(CFile *file, const CXMLText *text, const string &)
+writeText(CFile *file, const CXMLText *text, const std::string &)
 {
-  string str = CXMLNamedCharMgrInst->encodeString(text->getText());
+  std::string str = CXMLNamedCharMgrInst->encodeString(text->getText());
 
   file->write(CStrUtil::strprintf("%s\n", str.c_str()));
 }
 
 void
 CXML::
-writeComment(CFile *file, const CXMLComment *comment, const string &prefix)
+writeComment(CFile *file, const CXMLComment *comment, const std::string &prefix)
 {
   file->write(CStrUtil::strprintf("%s%s\n", prefix.c_str(), comment->getString().c_str()));
 }
@@ -171,28 +172,28 @@ writeComment(CFile *file, const CXMLComment *comment, const string &prefix)
 
 CXMLComment *
 CXMLFactory::
-createComment(const string &str)
+createComment(const std::string &str)
 {
   return new CXMLComment(str);
 }
 
 CXMLTag *
 CXMLFactory::
-createTag(CXMLTag *parent, const string &name, CXMLTag::OptionArray &options)
+createTag(CXMLTag *parent, const std::string &name, CXMLTag::OptionArray &options)
 {
   return new CXMLTag(parent, name, options);
 }
 
 CXMLTagOption *
 CXMLFactory::
-createTagOption(const string &name, const string &value)
+createTagOption(const std::string &name, const std::string &value)
 {
   return new CXMLTagOption(name, value);
 }
 
 CXMLText *
 CXMLFactory::
-createText(const string &str)
+createText(const std::string &str)
 {
   return new CXMLText(str);
 }

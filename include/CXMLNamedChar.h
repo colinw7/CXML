@@ -1,9 +1,9 @@
 #ifndef CXML_NAMED_CHAR_H
 #define CXML_NAMED_CHAR_H
 
-#define CXMLNamedCharMgrInst CXMLNamedCharMgr::getInstance()
-
 #include <map>
+
+#define CXMLNamedCharMgrInst CXMLNamedCharMgr::getInstance()
 
 struct CXMLNamedChar {
   const char *name;

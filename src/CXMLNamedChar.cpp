@@ -1,4 +1,5 @@
-#include "CXMLI.h"
+#include <CXMLLib.h>
+#include <cstring>
 
 CXMLNamedChar
 CXMLNamedCharMgr::
@@ -133,7 +134,7 @@ CXMLNamedCharMgr() :
 
 bool
 CXMLNamedCharMgr::
-lookup(const string &name, CXMLNamedChar **named_char) const
+lookup(const std::string &name, CXMLNamedChar **named_char) const
 {
   NameValueMap::const_iterator p = name_value_map_.find(name);
 
@@ -161,15 +162,15 @@ lookup(int value, CXMLNamedChar **named_char) const
   return false;
 }
 
-string
+std::string
 CXMLNamedCharMgr::
-encodeString(const string &str) const
+encodeString(const std::string &str) const
 {
   static const char *encode_chars = "\'\"&";
 
   CXMLNamedChar *named_char;
 
-  string str1;
+  std::string str1;
 
   uint len = str.size();
 

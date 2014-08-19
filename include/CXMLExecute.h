@@ -17,12 +17,6 @@ class CXMLExecute {
     const std::string &getValue() const { return value_; }
   };
 
- private:
-  typedef std::vector<Option> OptionList;
-
-  std::string id_;
-  OptionList  options_;
-
  public:
   CXMLExecute(const std::string &id);
 
@@ -37,6 +31,12 @@ class CXMLExecute {
   void print(std::ostream &os) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CXMLExecute &exec);
+
+ private:
+  typedef std::vector<Option> OptionList;
+
+  std::string id_;
+  OptionList  options_;
 };
 
 #endif

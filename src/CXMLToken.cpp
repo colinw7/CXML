@@ -1,4 +1,5 @@
-#include "CXMLI.h"
+#include <CXMLLib.h>
+#include <CStrUtil.h>
 
 CXMLToken::
 CXMLToken(CXMLTag *ptag, CXMLToken::Type type) :
@@ -13,8 +14,8 @@ CXMLToken::
 {
 }
 
-ostream &
-operator<<(ostream &os, const CXMLToken &token)
+std::ostream &
+operator<<(std::ostream &os, const CXMLToken &token)
 {
   token.print(os);
 
@@ -31,11 +32,11 @@ CXMLCommentToken(CXMLTag *ptag, CXMLComment *comment) :
 
 void
 CXMLCommentToken::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   int depth = ptag_->getDepth();
 
-  string pad = CStrUtil::duplicate("  ", depth);
+  std::string pad = CStrUtil::duplicate("  ", depth);
 
   os << pad << *comment_;
 }
@@ -50,11 +51,11 @@ CXMLTagToken(CXMLTag *ptag, CXMLTag *tag) :
 
 void
 CXMLTagToken::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   int depth = ptag_->getDepth();
 
-  string pad = CStrUtil::duplicate("  ", depth);
+  std::string pad = CStrUtil::duplicate("  ", depth);
 
   os << pad << *tag_;
 }
@@ -69,11 +70,11 @@ CXMLTextToken(CXMLTag *ptag, CXMLText *text) :
 
 void
 CXMLTextToken::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   int depth = ptag_->getDepth();
 
-  string pad = CStrUtil::duplicate("  ", depth);
+  std::string pad = CStrUtil::duplicate("  ", depth);
 
   os << pad << *text_;
 }
@@ -88,11 +89,11 @@ CXMLExecuteToken(CXMLTag *ptag, CXMLExecute *exec) :
 
 void
 CXMLExecuteToken::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   int depth = ptag_->getDepth();
 
-  string pad = CStrUtil::duplicate("  ", depth);
+  std::string pad = CStrUtil::duplicate("  ", depth);
 
   os << pad << *exec_;
 }

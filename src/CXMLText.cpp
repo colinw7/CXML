@@ -1,20 +1,20 @@
-#include "CXMLI.h"
+#include <CXMLLib.h>
 
 CXMLText::
-CXMLText(const string &text) :
+CXMLText(const std::string &text) :
  text_(text)
 {
 }
 
 void
 CXMLText::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << text_;
 }
 
-ostream &
-operator<<(ostream &os, const CXMLText &text)
+std::ostream &
+operator<<(std::ostream &os, const CXMLText &text)
 {
   text.print(os);
 

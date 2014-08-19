@@ -1,6 +1,9 @@
-#include "CXMLI.h"
+#include <CXMLLib.h>
 #include <CRegExp.h>
 #include <CStrParse.h>
+#include <CStrUtil.h>
+#include <CThrow.h>
+#include <cstdio>
 
 CXMLParser::
 CXMLParser(CXML &xml) :
@@ -15,7 +18,7 @@ CXMLParser::
 
 bool
 CXMLParser::
-read(const string &filename, CXMLTag **tag)
+read(const std::string &filename, CXMLTag **tag)
 {
   if (! CFile::exists(filename)) {
     CTHROW("File " + filename + " does not exist");
@@ -41,7 +44,7 @@ read(const string &filename, CXMLTag **tag)
 
 bool
 CXMLParser::
-readString(const string &str, CXMLTag **tag)
+readString(const std::string &str, CXMLTag **tag)
 {
   unreadChars(str);
 
@@ -62,7 +65,7 @@ readString(const string &str, CXMLTag **tag)
 
 bool
 CXMLParser::
-readStringOptions(const string &str, CXMLTag::OptionArray &options)
+readStringOptions(const std::string &str, CXMLTag::OptionArray &options)
 {
   unreadChars(str);
 
@@ -110,7 +113,7 @@ bool
 CXMLParser::
 isDocType()
 {
-  string str;
+  std::string str;
 
   if (! matchString("<!DOCTYPE "))
     return false;
@@ -124,7 +127,7 @@ bool
 CXMLParser::
 readDocType()
 {
-  string str;
+  std::string str;
 
   if (! matchString("<!DOCTYPE "))
     return false;
@@ -170,7 +173,7 @@ readDocType()
   str += readChar();
 
   if (xml_.getDebug())
-    cerr << "Doc Type: " << str << endl;
+    std::cerr << "Doc Type: " << str << std::endl;
 
   return true;
 }
@@ -179,7 +182,7 @@ bool
 CXMLParser::
 isCDATA()
 {
-  string str;
+  std::string str;
 
   if (! matchString("<!CDATA["))
     return false;
@@ -193,7 +196,7 @@ bool
 CXMLParser::
 readCDATA()
 {
-  string str;
+  std::string str;
 
   if (! matchString("<!CDATA["))
     return false;
@@ -220,7 +223,7 @@ readCDATA()
   }
 
   if (xml_.getDebug())
-    cerr << "CDATA: " << str << endl;
+    std::cerr << "CDATA: " << str << std::endl;
 
   return true;
 }
@@ -229,7 +232,7 @@ bool
 CXMLParser::
 isComment()
 {
-  string str;
+  std::string str;
 
   if (! matchString("<!--"))
     return false;
@@ -243,7 +246,7 @@ bool
 CXMLParser::
 readComment()
 {
-  string str;
+  std::string str;
 
   if (! matchString("<!--"))
     return false;
@@ -278,7 +281,7 @@ readComment()
   }
 
   if (xml_.getDebug())
-    cerr << "Comment: " << str << endl;
+    std::cerr << "Comment: " << str << std::endl;
 
   return true;
 }
@@ -287,7 +290,7 @@ bool
 CXMLParser::
 isExecute()
 {
-  string str;
+  std::string str;
 
   if (! matchString("<?"))
     return false;
@@ -304,10 +307,10 @@ readExecute()
   if (! matchString("<?"))
     return false;
 
-  string lhs = "<?";
-  string rhs = "?>";
+  std::string lhs = "<?";
+  std::string rhs = "?>";
 
-  string data;
+  std::string data;
 
   int c = lookChar();
 
@@ -327,7 +330,7 @@ readExecute()
   }
 
   if (xml_.getDebug())
-    cerr << "Execute: " << (lhs + data + rhs) << endl;
+    std::cerr << "Execute: " << (lhs + data + rhs) << std::endl;
 
   //------
 
@@ -337,7 +340,7 @@ readExecute()
 
 bool
 CXMLParser::
-parseExecute(const string &str)
+parseExecute(const std::string &str)
 {
   CStrParse parse(str);
 
@@ -351,7 +354,7 @@ parseExecute(const string &str)
   if (! isNameFirstChar(c))
     return false;
 
-  string id;
+  std::string id;
 
   id += c;
 
@@ -366,7 +369,7 @@ parseExecute(const string &str)
   }
 
   if (xml_.getDebug())
-    cerr << "Execute: " << id;
+    std::cerr << "Execute: " << id;
 
   CXMLExecute *exec = new CXMLExecute(id);
 
@@ -382,7 +385,7 @@ parseExecute(const string &str)
 
     //------
 
-    string name;
+    std::string name;
 
     c = parse.getCharAt();
 
@@ -403,7 +406,7 @@ parseExecute(const string &str)
 
     //------
 
-    string value;
+    std::string value;
 
     c = parse.getCharAt();
 
@@ -458,13 +461,13 @@ parseExecute(const string &str)
     //------
 
     if (xml_.getDebug())
-      cerr << " " << name << "=\"" << value << "\"";
+      std::cerr << " " << name << "=\"" << value << "\"";
 
     exec->addOption(name, value);
   }
 
   if (xml_.getDebug())
-    cerr << endl;
+    std::cerr << std::endl;
 
   CXMLExecuteToken *token = new CXMLExecuteToken(NULL, exec);
 
@@ -482,7 +485,7 @@ isTag()
   if (c != '<')
     return false;
 
-  string str;
+  std::string str;
 
   str += readChar();
 
@@ -539,7 +542,7 @@ readTag()
     return false;
   }
 
-  string name;
+  std::string name;
 
   name += c;
 
@@ -603,7 +606,7 @@ readTag()
       if (root_tag_ == NULL)
         root_tag_ = tag;
       else
-        cerr << "Multiple root tags" << endl;
+        std::cerr << "Multiple root tags" << std::endl;
     }
 
     if (! auto_close)
@@ -612,10 +615,10 @@ readTag()
     //------
 
     if (xml_.getDebug())
-      cerr << "Tag: " << *tag << endl;
+      std::cerr << "Tag: " << *tag << std::endl;
   }
   else {
-    const string &name1 = tag_->getName();
+    const std::string &name1 = tag_->getName();
 
     if (name1 != name) {
       parseError("Start end tag mismatch <" + name + "> </" + name1 + ">");
@@ -644,7 +647,7 @@ readTagOptions(CXMLTag::OptionArray &options)
 
     //------
 
-    string name;
+    std::string name;
 
     c = readChar();
 
@@ -666,7 +669,7 @@ readTagOptions(CXMLTag::OptionArray &options)
 
     //------
 
-    string value;
+    std::string value;
 
     c = lookChar();
 
@@ -729,7 +732,7 @@ readTagOptions(CXMLTag::OptionArray &options)
     CXMLTagOption *option = xml_.createTagOption(name, value);
 
     if (xml_.getDebug())
-      cerr << "Option: " << name << "=\"" << value << "\"" << endl;
+      std::cerr << "Option: " << name << "=\"" << value << "\"" << std::endl;
 
     options.push_back(option);
   }
@@ -737,14 +740,14 @@ readTagOptions(CXMLTag::OptionArray &options)
   return true;
 }
 
-string
+std::string
 CXMLParser::
-replaceNamedChars(const string &value)
+replaceNamedChars(const std::string &value)
 {
   static CRegExp re1("#x[0-9a-fA-F][0-9a-fA-F]");
   static CRegExp re2("#[0-9][0-9]*");
 
-  string value1;
+  std::string value1;
 
   uint i   = 0;
   uint len = value.size();
@@ -769,10 +772,10 @@ replaceNamedChars(const string &value)
 
       uint len1 = i - j - 1;
 
-      string name = value.substr(j + 1, len1);
+      std::string name = value.substr(j + 1, len1);
 
       if      (re1.find(name)) {
-        string hstr = name.substr(2);
+        std::string hstr = name.substr(2);
 
         uint h;
 
@@ -781,7 +784,7 @@ replaceNamedChars(const string &value)
         value1 += char(h);
       }
       else if (re2.find(name)) {
-        string dstr = name.substr(1);
+        std::string dstr = name.substr(1);
 
         long l;
 
@@ -821,7 +824,7 @@ readText()
   if (c == EOF)
     return true;
 
-  string str;
+  std::string str;
 
   str += c;
 
@@ -837,13 +840,13 @@ readText()
   //----
 
   if (tag_ == NULL) {
-    cerr << "Text with no current tag" << endl;
+    std::cerr << "Text with no current tag" << std::endl;
     return false;
   }
 
   //----
 
-  string str1;
+  std::string str1;
 
   if (! tag_->getPreserveSpace()) {
     str1 = CStrUtil::stripSpaces(str);
@@ -865,7 +868,7 @@ readText()
   new CXMLTextToken(tag_, text);
 
   if (xml_.getDebug())
-    cerr << "Text: >" << str << "<" << endl;
+    std::cerr << "Text: >" << str << "<" << std::endl;
 
   return true;
 }
@@ -886,9 +889,9 @@ isNameChar(int c)
 
 bool
 CXMLParser::
-matchString(const string &str)
+matchString(const std::string &str)
 {
-  string str1;
+  std::string str1;
 
   int len = str.size();
 
@@ -977,7 +980,7 @@ readChar()
 
 void
 CXMLParser::
-unreadChars(const string &str)
+unreadChars(const std::string &str)
 {
   for (int i = str.size() - 1; i >= 0; --i) {
     if (str[i] == '\n') {
@@ -1012,15 +1015,15 @@ parseError(const char *fmt, ...)
 
   va_start(vargs, fmt);
 
-  cerr << line_num_ << ":" << char_num_ << "> ";
-  cerr << CStrUtil::vstrprintf(fmt, &vargs) << endl;
+  std::cerr << line_num_ << ":" << char_num_ << "> ";
+  std::cerr << CStrUtil::vstrprintf(fmt, &vargs) << std::endl;
 
   va_end(vargs);
 }
 
 void
 CXMLParser::
-parseError(const string &str)
+parseError(const std::string &str)
 {
-  cerr << line_num_ << ":" << char_num_ << "> " << str << endl;
+  std::cerr << line_num_ << ":" << char_num_ << "> " << str << std::endl;
 }

@@ -14,10 +14,6 @@ class CXMLToken {
      CXML_TOKEN_EXECUTE
    };
 
- protected:
-  CXMLTag *ptag_;
-  Type     type_;
-
  public:
   CXMLToken(CXMLTag *ptag, Type type);
 
@@ -30,10 +26,10 @@ class CXMLToken {
   bool isText   () const { return type_ == CXML_TOKEN_TEXT   ; }
   bool isExecute() const { return type_ == CXML_TOKEN_EXECUTE; }
 
-  virtual CXMLComment *getComment() const { return NULL; }
-  virtual CXMLTag     *getTag    () const { return NULL; }
-  virtual CXMLText    *getText   () const { return NULL; }
-  virtual CXMLExecute *getExecute() const { return NULL; }
+  virtual CXMLComment *getComment() const { return 0; }
+  virtual CXMLTag     *getTag    () const { return 0; }
+  virtual CXMLText    *getText   () const { return 0; }
+  virtual CXMLExecute *getExecute() const { return 0; }
 
   virtual void print(std::ostream &os) const = 0;
 
@@ -42,6 +38,10 @@ class CXMLToken {
  private:
   CXMLToken(const CXMLToken &rhs);
   CXMLToken &operator=(const CXMLToken &rhs);
+
+ protected:
+  CXMLTag *ptag_;
+  Type     type_;
 };
 
 class CXMLCommentToken : public CXMLToken {

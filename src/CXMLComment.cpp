@@ -1,20 +1,20 @@
-#include "CXMLI.h"
+#include <CXMLLib.h>
 
 CXMLComment::
-CXMLComment(const string &str) :
+CXMLComment(const std::string &str) :
  str_(str)
 {
 }
 
 void
 CXMLComment::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "<!--" << str_ << "-->";
 }
 
-ostream &
-operator<<(ostream &os, const CXMLComment &comment)
+std::ostream &
+operator<<(std::ostream &os, const CXMLComment &comment)
 {
   comment.print(os);
 
