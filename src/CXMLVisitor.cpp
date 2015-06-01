@@ -183,7 +183,7 @@ find(std::string &value)
 {
   process();
 
-  if (! result_.getValid())
+  if (! result_.isValid())
     return false;
 
   value = result_.getValue();
