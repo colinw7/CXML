@@ -2,10 +2,7 @@
 #include <CStrUtil.h>
 
 CXML::
-CXML() :
- factory_(),
- tokens_ (),
- debug_  (false)
+CXML()
 {
   factory_ = new CXMLFactory;
 }

@@ -110,13 +110,13 @@ class CXMLTag {
   CXMLTag &operator=(const CXMLTag &rhs);
 
  private:
-  CXMLTag       *parent_;
+  CXMLTag       *parent_ { 0 };
   std::string    name_;
   OptionArray    options_;
   CXMLTagTokens  children_;
-  bool           preserveSpace_;
-  int            line_num_;
-  int            char_num_;
+  bool           preserveSpace_ { false };
+  int            line_num_ { 1 };
+  int            char_num_ { 0 };
 };
 
 #endif

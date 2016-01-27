@@ -7,7 +7,7 @@
 
 CXMLParser::
 CXMLParser(CXML &xml) :
- xml_(xml), file_(NULL), root_tag_(NULL), tag_(NULL), buffer_(), line_num_(1), char_num_(0)
+ xml_(xml)
 {
 }
 
@@ -25,14 +25,14 @@ read(const std::string &filename, CXMLTag **tag)
     return false;
   }
 
-  root_tag_ = NULL;
-  tag_      = NULL;
+  root_tag_ = 0;
+  tag_      = 0;
 
   file_ = new CFile(filename);
 
   readLoop();
 
-  file_ = NULL;
+  file_ = 0;
 
   if (lookChar() != EOF)
     return false;
@@ -48,10 +48,10 @@ readString(const std::string &str, CXMLTag **tag)
 {
   unreadChars(str);
 
-  root_tag_ = NULL;
-  tag_      = NULL;
+  root_tag_ = 0;
+  tag_      = 0;
 
-  file_ = NULL;
+  file_ = 0;
 
   readLoop();
 
@@ -104,7 +104,7 @@ readLoop()
         break;
     }
 
-    if (tag_ == NULL || ! tag_->getPreserveSpace())
+    if (tag_ == 0 || ! tag_->getPreserveSpace())
       skipSpaces();
   }
 }
@@ -274,7 +274,7 @@ readComment()
     return false;
   }
 
-  if (tag_ != NULL) {
+  if (tag_ != 0) {
     CXMLComment *comment = xml_.createComment(str);
 
     new CXMLCommentToken(tag_, comment);
@@ -469,7 +469,7 @@ parseExecute(const std::string &str)
   if (xml_.getDebug())
     std::cerr << std::endl;
 
-  CXMLExecuteToken *token = new CXMLExecuteToken(NULL, exec);
+  CXMLExecuteToken *token = new CXMLExecuteToken(0, exec);
 
   xml_.addToken(token);
 
@@ -602,8 +602,8 @@ readTag()
 
     new CXMLTagToken(tag_, tag);
 
-    if (tag_ == NULL) {
-      if (root_tag_ == NULL)
+    if (tag_ == 0) {
+      if (root_tag_ == 0)
         root_tag_ = tag;
       else
         std::cerr << "Multiple root tags" << std::endl;
@@ -839,7 +839,7 @@ readText()
 
   //----
 
-  if (tag_ == NULL) {
+  if (tag_ == 0) {
     std::cerr << "Text with no current tag" << std::endl;
     return false;
   }
@@ -929,7 +929,7 @@ lookChar()
   if (buffer_.size() == 0) {
     int c = EOF;
 
-    if (file_ != NULL)
+    if (file_ != 0)
       c = file_->getC();
 
     if (c == EOF)
@@ -946,7 +946,7 @@ CXMLParser::
 readChar()
 {
   if (buffer_.size() == 0) {
-    if (file_ != NULL) {
+    if (file_ != 0) {
       int c = file_->getC();
 
       if (c == '\n') {

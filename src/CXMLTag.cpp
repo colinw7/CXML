@@ -4,10 +4,9 @@
 
 CXMLTag::
 CXMLTag(CXMLTag *parent, const std::string &name, const CXMLTag::OptionArray &options) :
- parent_(parent), name_(name), options_(), children_(), preserveSpace_(false),
- line_num_(0), char_num_(0)
+ parent_(parent), name_(name)
 {
-  if (parent != NULL)
+  if (parent != 0)
     preserveSpace_ = parent->preserveSpace_;
 
   uint num_options = options.size();
@@ -51,7 +50,7 @@ getDepth() const
 
   const CXMLTag *tag = this;
 
-  while (tag->parent_ != NULL) {
+  while (tag->parent_ != 0) {
     ++depth;
 
     tag = tag->parent_;

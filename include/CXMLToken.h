@@ -7,12 +7,13 @@ class CXMLExecute;
 
 class CXMLToken {
  public:
-   enum Type {
-     CXML_TOKEN_COMMENT,
-     CXML_TOKEN_TAG,
-     CXML_TOKEN_TEXT,
-     CXML_TOKEN_EXECUTE
-   };
+  enum Type {
+    CXML_TOKEN_NONE,
+    CXML_TOKEN_COMMENT,
+    CXML_TOKEN_TAG,
+    CXML_TOKEN_TEXT,
+    CXML_TOKEN_EXECUTE
+  };
 
  public:
   CXMLToken(CXMLTag *ptag, Type type);
@@ -40,14 +41,11 @@ class CXMLToken {
   CXMLToken &operator=(const CXMLToken &rhs);
 
  protected:
-  CXMLTag *ptag_;
-  Type     type_;
+  CXMLTag *ptag_ { 0 };
+  Type     type_ { CXML_TOKEN_NONE };
 };
 
 class CXMLCommentToken : public CXMLToken {
- private:
-  CXMLComment *comment_;
-
  public:
   CXMLCommentToken(CXMLTag *ptag, CXMLComment *comment);
 
@@ -58,12 +56,12 @@ class CXMLCommentToken : public CXMLToken {
  private:
   CXMLCommentToken(const CXMLCommentToken &rhs);
   CXMLCommentToken &operator=(const CXMLCommentToken &rhs);
+
+ private:
+  CXMLComment *comment_ { 0 };
 };
 
 class CXMLTagToken : public CXMLToken {
- private:
-  CXMLTag *tag_;
-
  public:
   CXMLTagToken(CXMLTag *ptag, CXMLTag *tag);
 
@@ -74,12 +72,12 @@ class CXMLTagToken : public CXMLToken {
  private:
   CXMLTagToken(const CXMLTagToken &rhs);
   CXMLTagToken &operator=(const CXMLTagToken &rhs);
+
+ private:
+  CXMLTag *tag_ { 0 };
 };
 
 class CXMLTextToken : public CXMLToken {
- private:
-  CXMLText *text_;
-
  public:
   CXMLTextToken(CXMLTag *ptag, CXMLText *text);
 
@@ -90,12 +88,12 @@ class CXMLTextToken : public CXMLToken {
  private:
   CXMLTextToken(const CXMLTextToken &rhs);
   CXMLTextToken &operator=(const CXMLTextToken &rhs);
+
+ private:
+  CXMLText *text_ { 0 };
 };
 
 class CXMLExecuteToken : public CXMLToken {
- private:
-  CXMLExecute *exec_;
-
  public:
   CXMLExecuteToken(CXMLTag *ptag, CXMLExecute *exec);
 
@@ -106,6 +104,9 @@ class CXMLExecuteToken : public CXMLToken {
  private:
   CXMLExecuteToken(const CXMLExecuteToken &rhs);
   CXMLExecuteToken &operator=(const CXMLExecuteToken &rhs);
+
+ private:
+  CXMLExecute *exec_ { 0 };
 };
 
 #endif

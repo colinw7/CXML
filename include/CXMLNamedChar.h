@@ -15,6 +15,16 @@ struct CXMLNamedChar {
 };
 
 class CXMLNamedCharMgr {
+ public:
+  static CXMLNamedCharMgr *getInstance();
+
+  CXMLNamedCharMgr();
+
+  bool lookup(const std::string &name, CXMLNamedChar **named_char) const;
+  bool lookup(int value, CXMLNamedChar **named_char) const;
+
+  std::string encodeString(const std::string &str) const;
+
  private:
   typedef std::map<std::string,CXMLNamedChar *> NameValueMap;
   typedef std::map<int        ,CXMLNamedChar *> ValueNameMap;
@@ -25,16 +35,6 @@ class CXMLNamedCharMgr {
 
   NameValueMap name_value_map_;
   ValueNameMap value_name_map_;
-
- public:
-  static CXMLNamedCharMgr *getInstance();
-
-  CXMLNamedCharMgr();
-
-  bool lookup(const std::string &name, CXMLNamedChar **named_char) const;
-  bool lookup(int value, CXMLNamedChar **named_char) const;
-
-  std::string encodeString(const std::string &str) const;
 };
 
 #endif

@@ -9,14 +9,8 @@ class CXMLTagOption;
 class CXMLText;
 
 class CXMLVisitor {
- private:
-  CXMLTag *tag_;
-  bool     brk_;
-
  public:
-  CXMLVisitor(CXMLTag *tag) :
-   tag_(tag), brk_(false) {
-  }
+  CXMLVisitor(CXMLTag *tag);
 
   virtual ~CXMLVisitor() { }
 
@@ -38,15 +32,23 @@ class CXMLVisitor {
  private:
   CXMLVisitor(const CXMLVisitor &rhs);
   CXMLVisitor &operator=(const CXMLVisitor &rhs);
+
+ private:
+  CXMLTag *tag_ { 0 };
+  bool     brk_ { false };
 };
 
 class CXMLPrintVisitor : public CXMLVisitor {
  public:
-  CXMLPrintVisitor(std::ostream &os, CXMLTag *tag) :
-   CXMLVisitor(tag), os_(os), depth_(0) {
-  }
+  CXMLPrintVisitor(std::ostream &os, CXMLTag *tag);
 
  ~CXMLPrintVisitor() { }
+
+  bool isShowOptions() const { return showOptions_; }
+  void setShowOptions(bool b) { showOptions_ = b; }
+
+  bool isShowText() const { return showText_; }
+  void setShowText(bool b) { showText_ = b; }
 
  private:
   bool processTagStart(CXMLTag *tag);
@@ -60,20 +62,32 @@ class CXMLPrintVisitor : public CXMLVisitor {
 
  private:
   std::ostream &os_;
-  uint          depth_;
+  uint          depth_ { 0 };
+  bool          showOptions_ { true };
+  bool          showText_    { true };
 };
 
 class CXMLFindVisitor : public CXMLVisitor {
  public:
-  CXMLFindVisitor(CXMLTag *tag, const std::string &def) :
-   CXMLVisitor(tag), def_(def), temp_def_tag_(""), temp_def_opt_(""), result_() {
-  }
+  typedef std::vector<std::string> Strings;
+
+ public:
+  CXMLFindVisitor(CXMLTag *tag, const std::string &match);
 
  ~CXMLFindVisitor() { }
 
+  const std::string &match() const { return match_; }
+  void setMatch(const std::string &s);
+
+  bool isSingleMatch() const { return singleMatch_; }
+  void setSingleMatch(bool b) { singleMatch_ = b; }
+
   bool find(std::string &value);
+  bool find(Strings &values);
 
  private:
+  void initMatch();
+
   bool processTagStart(CXMLTag *tag);
   bool processTagOption(CXMLTagOption *opt);
   bool processTagOptionsEnd(CXMLTag *tag);
@@ -81,11 +95,18 @@ class CXMLFindVisitor : public CXMLVisitor {
   bool processTagChildText(CXMLText *child_text);
   bool processTagEnd(CXMLTag *tag);
 
+  bool matchTag() const;
+  bool matchOption(const std::string &optionStr) const;
+  bool matchTagFields() const;
+
  private:
-  std::string           def_;
-  std::string           temp_def_tag_;
-  std::string           temp_def_opt_;
-  COptValT<std::string> result_;
+  std::string match_;
+  Strings     matchFields_;
+  Strings     matchOptions_;
+  bool        matchHasOption_ { false };
+  bool        singleMatch_ { false };
+  Strings     tagFields_;
+  Strings     results_;
 };
 
 #endif

@@ -60,11 +60,11 @@ class CXMLParser {
  private:
   CXML             &xml_;
   CAutoPtr<CFile>   file_;
-  CXMLTag          *root_tag_;
-  CXMLTag          *tag_;
+  CXMLTag          *root_tag_ { 0 };
+  CXMLTag          *tag_ { 0 };
   std::vector<int>  buffer_;
-  uint              line_num_;
-  uint              char_num_;
+  uint              line_num_ { 1 };
+  uint              char_num_ { 0 };
 };
 
 #endif

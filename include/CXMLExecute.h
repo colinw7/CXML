@@ -4,10 +4,6 @@
 class CXMLExecute {
  public:
   class Option {
-   private:
-    std::string name_;
-    std::string value_;
-
    public:
     Option(const std::string &name, const std::string &value) :
      name_(name), value_(value) {
@@ -15,6 +11,10 @@ class CXMLExecute {
 
     const std::string &getName () const { return name_ ; }
     const std::string &getValue() const { return value_; }
+
+   private:
+    std::string name_;
+    std::string value_;
   };
 
  public:

@@ -2,6 +2,14 @@
 #include <CXMLTag.h>
 #include <CXMLToken.h>
 #include <CXMLText.h>
+#include <CStrUtil.h>
+#include <cassert>
+
+CXMLVisitor::
+CXMLVisitor(CXMLTag *tag) :
+ tag_(tag)
+{
+}
 
 bool
 CXMLVisitor::
@@ -104,6 +112,12 @@ error(CXMLTag *tag, const std::string &msg) const
 
 //-------------------
 
+CXMLPrintVisitor::
+CXMLPrintVisitor(std::ostream &os, CXMLTag *tag) :
+ CXMLVisitor(tag), os_(os)
+{
+}
+
 bool
 CXMLPrintVisitor::
 processTagStart(CXMLTag *tag)
@@ -119,7 +133,8 @@ bool
 CXMLPrintVisitor::
 processTagOption(CXMLTagOption *opt)
 {
-  os_ << " " << opt->getName() << "=\"" << opt->getValue() << "\"";
+  if (isShowOptions())
+    os_ << " " << opt->getName() << "=\"" << opt->getValue() << "\"";
 
   return true;
 }
@@ -146,9 +161,11 @@ bool
 CXMLPrintVisitor::
 processTagChildText(CXMLText *child_text)
 {
-  prefix();
+  if (isShowText()) {
+    prefix();
 
-  os_ << child_text->getText() << std::endl;
+    os_ << child_text->getText() << std::endl;
+  }
 
   return true;
 }
@@ -177,16 +194,76 @@ prefix()
 
 //-------------------
 
+CXMLFindVisitor::
+CXMLFindVisitor(CXMLTag *tag, const std::string &match) :
+ CXMLVisitor(tag), match_(match)
+{
+  initMatch();
+}
+
+void
+CXMLFindVisitor::
+setMatch(const std::string &s)
+{
+  match_ = s;
+
+  initMatch();
+}
+
+void
+CXMLFindVisitor::
+initMatch()
+{
+  matchFields_ .clear();
+  matchOptions_.clear();
+
+  matchHasOption_ = false;
+
+  CStrUtil::addFields(match_, matchFields_, "/");
+
+  int n = matchFields_.size();
+
+  if (n > 0) {
+    const std::string &lf = matchFields_[n - 1];
+
+    int l = lf.length();
+
+    if (l > 0 && lf[0] == '<' && lf[l - 1] == '>') {
+      matchHasOption_ = true;
+
+      std::string matchOption = matchFields_.back().substr(1, l - 2);
+
+      matchFields_.pop_back();
+
+      CStrUtil::addFields(matchOption, matchOptions_, ",");
+    }
+  }
+}
+
 bool
 CXMLFindVisitor::
 find(std::string &value)
 {
-  process();
+  Strings values;
 
-  if (! result_.isValid())
+  if (! find(values))
     return false;
 
-  value = result_.getValue();
+  value = values[0];
+
+  return true;
+}
+
+bool
+CXMLFindVisitor::
+find(Strings &values)
+{
+  process();
+
+  if (results_.empty())
+    return false;
+
+  values = results_;
 
   return true;
 }
@@ -195,14 +272,18 @@ bool
 CXMLFindVisitor::
 processTagStart(CXMLTag *tag)
 {
-  if (! temp_def_tag_.empty())
-    temp_def_tag_ += "/";
+  tagFields_.push_back(tag->getName());
 
-  temp_def_tag_ += tag->getName();
+  if (matchTag()) {
+    std::string tagFieldsStr = tagFields_[0];
 
-  if (temp_def_tag_ == def_) {
-    result_ = "??";
-    setBreak(true);
+    for (uint i = 1; i < tagFields_.size(); ++i)
+      tagFieldsStr += "/" + tagFields_[i];
+
+    results_.push_back(tagFieldsStr);
+
+    if (isSingleMatch())
+      setBreak(true);
   }
 
   return true;
@@ -212,11 +293,11 @@ bool
 CXMLFindVisitor::
 processTagOption(CXMLTagOption *opt)
 {
-  temp_def_opt_ = temp_def_tag_ + "<" + opt->getName() + ">";
+  if (matchOption(opt->getName())) {
+    results_.push_back(opt->getValue());
 
-  if (temp_def_opt_ == def_) {
-    result_ = opt->getValue();
-    setBreak(true);
+    if (isSingleMatch())
+      setBreak(true);
   }
 
   return true;
@@ -247,5 +328,80 @@ bool
 CXMLFindVisitor::
 processTagEnd(CXMLTag *)
 {
+  assert(! tagFields_.empty());
+
+  tagFields_.pop_back();
+
+  return true;
+}
+
+bool
+CXMLFindVisitor::
+matchTag() const
+{
+  if (matchHasOption_)
+    return false;
+
+  matchTagFields();
+
+  return true;
+}
+
+bool
+CXMLFindVisitor::
+matchOption(const std::string &optionStr) const
+{
+  if (! matchHasOption_)
+    return false;
+
+  bool match = false;
+
+  int no = matchOptions_.size();
+
+  for (int i = 0; i < no; ++i) {
+    if (matchOptions_[i] == "*" || matchOptions_[i] == optionStr) {
+      match = true;
+      break;
+    }
+  }
+
+  if (! match)
+    return false;
+
+  return matchTagFields();
+}
+
+bool
+CXMLFindVisitor::
+matchTagFields() const
+{
+  int nt = tagFields_  .size();
+  int nm = matchFields_.size();
+
+  int j = 0;
+
+  for (int i = 0; i < nt; ++i) {
+    if (j >= nm)
+      return false;
+
+    if (matchFields_[j] == "...") {
+      if (i < nt - 1)
+        continue;
+
+      ++j;
+
+      if (j >= nm)
+        return true;
+    }
+
+    const std::string &matchField = matchFields_[j++];
+
+    if (matchField == "*")
+      continue;
+
+    if (matchField != tagFields_[i])
+      return false;
+  }
+
   return true;
 }

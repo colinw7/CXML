@@ -52,7 +52,7 @@ class CXML {
 
   CAutoPtr<CXMLFactory> factory_;
   TokenList             tokens_;
-  bool                  debug_;
+  bool                  debug_ { false };
 };
 
 class CXMLFactory {

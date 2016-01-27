@@ -2,9 +2,6 @@
 #define CXML_TEXT_H
 
 class CXMLText {
- private:
-  std::string text_;
-
  public:
   CXMLText(const std::string &text);
 
@@ -13,6 +10,9 @@ class CXMLText {
   void print(std::ostream &os) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CXMLText &text);
+
+ private:
+  std::string text_;
 };
 
 #endif

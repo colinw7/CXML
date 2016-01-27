@@ -5,7 +5,7 @@ class CXMLComment {
  public:
   CXMLComment(const std::string &str);
 
-  std::string getString() const { return str_; }
+  const std::string &getString() const { return str_; }
 
   void print(std::ostream &os) const;
 

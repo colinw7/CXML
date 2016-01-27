@@ -107,16 +107,15 @@ named_chars_[] = {
   CXMLNamedChar("yuml"  , 255),
 };
 
-uint CXMLNamedCharMgr::num_named_chars_ =
-      sizeof(named_chars_)/sizeof(CXMLNamedChar);
+uint CXMLNamedCharMgr::num_named_chars_ = sizeof(named_chars_)/sizeof(CXMLNamedChar);
 
 CXMLNamedCharMgr *
 CXMLNamedCharMgr::
 getInstance()
 {
-  static CXMLNamedCharMgr *instance_ = NULL;
+  static CXMLNamedCharMgr *instance_ = 0;
 
-  if (instance_ == NULL)
+  if (instance_ == 0)
     instance_ = new CXMLNamedCharMgr();
 
   return instance_;
@@ -175,7 +174,7 @@ encodeString(const std::string &str) const
   uint len = str.size();
 
   for (uint i = 0; i < len; ++i) {
-    if (strchr(encode_chars, str[i]) != NULL) {
+    if (strchr(encode_chars, str[i]) != 0) {
       lookup(int(str[i]), &named_char);
 
       str1 += "&";
