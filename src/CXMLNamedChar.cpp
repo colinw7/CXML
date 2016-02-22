@@ -165,7 +165,7 @@ std::string
 CXMLNamedCharMgr::
 encodeString(const std::string &str) const
 {
-  static const char *encode_chars = "\'\"&";
+  static const char *encode_chars = "<\'\"&";
 
   CXMLNamedChar *named_char;
 
