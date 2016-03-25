@@ -1,5 +1,4 @@
 #include <CXMLLib.h>
-#include <CFuncs.h>
 #include <algorithm>
 
 CXMLTag::
@@ -34,10 +33,8 @@ getChildren() const
 {
   TokenArray children;
 
-  CXMLTagTokens::const_iterator pc1, pc2;
-
-  for (pc1 = children_.begin(), pc2 = children_.end(); pc1 != pc2; ++pc1)
-    children.push_back(*pc1);
+  for (const auto &c : children_.tokens())
+    children.push_back(c);
 
   return children;
 }
@@ -176,7 +173,8 @@ void
 CXMLTagTokens::
 clear()
 {
-  std::for_each(tokens_.begin(), tokens_.end(), CDeletePointer());
+  for (auto &t : tokens_)
+    delete t;
 
   tokens_.clear();
 }

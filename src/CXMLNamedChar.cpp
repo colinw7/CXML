@@ -135,7 +135,7 @@ bool
 CXMLNamedCharMgr::
 lookup(const std::string &name, CXMLNamedChar **named_char) const
 {
-  NameValueMap::const_iterator p = name_value_map_.find(name);
+  auto p = name_value_map_.find(name);
 
   if (p != name_value_map_.end()) {
     *named_char = p->second;
@@ -150,7 +150,7 @@ bool
 CXMLNamedCharMgr::
 lookup(int value, CXMLNamedChar **named_char) const
 {
-  ValueNameMap::const_iterator p = value_name_map_.find(value);
+  auto p = value_name_map_.find(value);
 
   if (p != value_name_map_.end()) {
     *named_char = p->second;

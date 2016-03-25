@@ -9,7 +9,7 @@ class CXMLTagTokens {
  public:
   typedef std::vector<CXMLToken *> TokenArray;
 
-  typedef TokenArray::const_iterator const_iterator;
+  //typedef TokenArray::const_iterator const_iterator;
 
  public:
   CXMLTagTokens();
@@ -19,8 +19,10 @@ class CXMLTagTokens {
 
   uint size() const { return tokens_.size(); }
 
-  const_iterator begin() const { return tokens_.begin(); }
-  const_iterator end  () const { return tokens_.end  (); }
+  const TokenArray &tokens() const { return tokens_; }
+
+  //const_iterator begin() const { return tokens_.begin(); }
+  //const_iterator end  () const { return tokens_.end  (); }
 
   const CXMLToken *operator[](int i) const { return tokens_[i]; }
 
@@ -29,6 +31,8 @@ class CXMLTagTokens {
  private:
   TokenArray tokens_;
 };
+
+//------
 
 class CXMLTagOption {
  public:
@@ -52,6 +56,8 @@ class CXMLTagOption {
   std::string value_;
 };
 
+//------
+
 class CXMLTag {
  public:
   typedef std::vector<CXMLTagOption *> OptionArray;
@@ -66,20 +72,26 @@ class CXMLTag {
 
   const std::string &getName() const { return name_; }
 
+  //---
+
   int getNumOptions() const { return options_.size(); }
 
   const OptionArray &getOptions() const { return options_; }
 
-  OptionArray::iterator getOptionsBegin() { return options_.begin(); }
-  OptionArray::iterator getOptionsEnd  () { return options_.end  (); }
+  //OptionArray::iterator getOptionsBegin() { return options_.begin(); }
+  //OptionArray::iterator getOptionsEnd  () { return options_.end  (); }
 
   const CXMLTagOption *getOption(int i) const { return options_[i]; }
+
+  //---
 
   int getNumChildren() const { return children_.size(); }
 
   TokenArray getChildren() const;
 
   const CXMLToken *getChild(int i) const { return children_[i]; }
+
+  //---
 
   bool getPreserveSpace() const { return preserveSpace_; }
 

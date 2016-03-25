@@ -1,5 +1,4 @@
 #include <CFile.h>
-#include <CFuncs.h>
 #include <CThrow.h>
 #include <CStrUtil.h>
 

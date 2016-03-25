@@ -14,6 +14,8 @@ struct CXMLNamedChar {
   }
 };
 
+//---
+
 class CXMLNamedCharMgr {
  public:
   static CXMLNamedCharMgr *getInstance();

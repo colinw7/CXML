@@ -38,6 +38,8 @@ class CXMLVisitor {
   bool     brk_ { false };
 };
 
+//------
+
 class CXMLPrintVisitor : public CXMLVisitor {
  public:
   CXMLPrintVisitor(std::ostream &os, CXMLTag *tag);
@@ -66,6 +68,8 @@ class CXMLPrintVisitor : public CXMLVisitor {
   bool          showOptions_ { true };
   bool          showText_    { true };
 };
+
+//------
 
 class CXMLFindVisitor : public CXMLVisitor {
  public:

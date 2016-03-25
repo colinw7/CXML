@@ -55,6 +55,8 @@ class CXML {
   bool                  debug_ { false };
 };
 
+//------
+
 class CXMLFactory {
  public:
   CXMLFactory() { }

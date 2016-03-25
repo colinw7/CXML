@@ -34,14 +34,9 @@ subProcess(CXMLTag *tag)
 
   //------
 
-  CXMLTag::OptionArray options = tag->getOptions();
-
-  CXMLTag::OptionArray::iterator p1 = options.begin();
-  CXMLTag::OptionArray::iterator p2 = options.end  ();
-
-  for ( ; p1 != p2; ++p1) {
-    if (! processTagOption(*p1))
-      error(tag, "Unknown option " + (*p1)->getName());
+  for (const auto &o : tag->getOptions()) {
+    if (! processTagOption(o))
+      error(tag, "Unknown option " + o->getName());
 
      if (getBreak())
        return true;

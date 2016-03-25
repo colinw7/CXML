@@ -121,14 +121,8 @@ writeTag(CFile *file, const CXMLTag *tag, const std::string &prefix)
 {
   file->write(CStrUtil::strprintf("%s<%s", prefix.c_str(), tag->getName().c_str()));
 
-  CXMLTag::OptionArray options = tag->getOptions();
-
-  CXMLTag::OptionArray::iterator p1 = options.begin();
-  CXMLTag::OptionArray::iterator p2 = options.end  ();
-
-  for ( ; p1 != p2; ++p1)
-    file->write(CStrUtil::strprintf(" %s=\"%s\"", (*p1)->getName().c_str(),
-                (*p1)->getValue().c_str()));
+  for (const auto &o : tag->getOptions())
+    file->write(CStrUtil::strprintf(" %s=\"%s\"", o->getName().c_str(), o->getValue().c_str()));
 
   CXMLTag::TokenArray children = tag->getChildren();
 

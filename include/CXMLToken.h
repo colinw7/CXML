@@ -45,6 +45,8 @@ class CXMLToken {
   Type     type_ { CXML_TOKEN_NONE };
 };
 
+//------
+
 class CXMLCommentToken : public CXMLToken {
  public:
   CXMLCommentToken(CXMLTag *ptag, CXMLComment *comment);
@@ -60,6 +62,8 @@ class CXMLCommentToken : public CXMLToken {
  private:
   CXMLComment *comment_ { 0 };
 };
+
+//------
 
 class CXMLTagToken : public CXMLToken {
  public:
@@ -77,6 +81,8 @@ class CXMLTagToken : public CXMLToken {
   CXMLTag *tag_ { 0 };
 };
 
+//------
+
 class CXMLTextToken : public CXMLToken {
  public:
   CXMLTextToken(CXMLTag *ptag, CXMLText *text);
@@ -92,6 +98,8 @@ class CXMLTextToken : public CXMLToken {
  private:
   CXMLText *text_ { 0 };
 };
+
+//------
 
 class CXMLExecuteToken : public CXMLToken {
  public:
