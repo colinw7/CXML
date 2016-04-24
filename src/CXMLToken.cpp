@@ -5,7 +5,7 @@ CXMLToken::
 CXMLToken(CXMLTag *ptag, CXMLToken::Type type) :
  ptag_(ptag), type_(type)
 {
-  if (ptag_ != 0)
+  if (ptag_)
     ptag_->addChild(this);
 }
 

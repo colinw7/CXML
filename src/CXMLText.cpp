@@ -10,7 +10,7 @@ void
 CXMLText::
 print(std::ostream &os) const
 {
-  os << text_;
+  os << CXMLNamedCharMgrInst->encodeString(text_);
 }
 
 std::ostream &

@@ -27,18 +27,6 @@ CXMLTag(CXMLTag *parent, const std::string &name, const CXMLTag::OptionArray &op
   }
 }
 
-CXMLTag::TokenArray
-CXMLTag::
-getChildren() const
-{
-  TokenArray children;
-
-  for (const auto &c : children_.tokens())
-    children.push_back(c);
-
-  return children;
-}
-
 int
 CXMLTag::
 getDepth() const
@@ -88,7 +76,7 @@ void
 CXMLTag::
 addChild(CXMLToken *child)
 {
-  children_.add(child);
+  children_.push_back(child);
 }
 
 bool
@@ -150,9 +138,9 @@ print(std::ostream &os) const
 
 //------
 
+#if 0
 CXMLTagTokens::
-CXMLTagTokens() :
- tokens_()
+CXMLTagTokens()
 {
 }
 
@@ -178,3 +166,4 @@ clear()
 
   tokens_.clear();
 }
+#endif

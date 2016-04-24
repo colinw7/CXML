@@ -2,7 +2,7 @@
 
 CXMLExecute::
 CXMLExecute(const std::string &id) :
- id_(id), options_()
+ id_(id)
 {
 }
 

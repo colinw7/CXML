@@ -13,6 +13,9 @@ class CFile;
 
 class CXML {
  public:
+  typedef std::vector<CXMLToken *> TokenList;
+
+ public:
   CXML();
 
   void setDebug(bool debug) { debug_ = debug; }
@@ -22,6 +25,8 @@ class CXML {
   void setFactory(CXMLFactory *factory);
 
   void addToken(CXMLToken *token);
+
+  const TokenList &getTokens() const { return tokens_; }
 
   uint getNumTokens() const { return tokens_.size(); }
 
@@ -48,8 +53,6 @@ class CXML {
   void writeComment(CFile *file, const CXMLComment *comment, const std::string &prefix);
 
  private:
-  typedef std::vector<CXMLToken *> TokenList;
-
   CAutoPtr<CXMLFactory> factory_;
   TokenList             tokens_;
   bool                  debug_ { false };

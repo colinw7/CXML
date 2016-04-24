@@ -3,6 +3,7 @@
 #include <CStrParse.h>
 #include <CStrUtil.h>
 #include <CThrow.h>
+#include <CUtf8.h>
 #include <cstdio>
 
 CXMLParser::
@@ -76,7 +77,7 @@ void
 CXMLParser::
 readLoop()
 {
-  skipSpaces();
+  bool skipped = skipSpaces();
 
   while (lookChar() != EOF) {
     if      (isDocType()) {
@@ -100,12 +101,14 @@ readLoop()
         break;
     }
     else {
-      if (! readText())
+      if (! readText(skipped))
         break;
     }
 
-    if (tag_ == 0 || ! tag_->getPreserveSpace())
-      skipSpaces();
+    if (! tag_ || ! tag_->getPreserveSpace())
+      skipped = skipSpaces();
+    else
+      skipped = false;
   }
 }
 
@@ -602,8 +605,8 @@ readTag()
 
     new CXMLTagToken(tag_, tag);
 
-    if (tag_ == 0) {
-      if (root_tag_ == 0)
+    if (! tag_) {
+      if (! root_tag_)
         root_tag_ = tag;
       else
         std::cerr << "Multiple root tags" << std::endl;
@@ -744,8 +747,9 @@ std::string
 CXMLParser::
 replaceNamedChars(const std::string &value)
 {
-  static CRegExp re1("#x[0-9a-fA-F][0-9a-fA-F]");
-  static CRegExp re2("#[0-9][0-9]*");
+  static CRegExp re1("#x[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]");
+  static CRegExp re2("#x[0-9a-fA-F][0-9a-fA-F]");
+  static CRegExp re3("#[0-9][0-9]*");
 
   std::string value1;
 
@@ -774,6 +778,7 @@ replaceNamedChars(const std::string &value)
 
       std::string name = value.substr(j + 1, len1);
 
+      // hex char (3)
       if      (re1.find(name)) {
         std::string hstr = name.substr(2);
 
@@ -781,26 +786,36 @@ replaceNamedChars(const std::string &value)
 
         CStrUtil::decodeHexString(hstr, &h);
 
-        value1 += char(h);
+        CUtf8::append(value1, h);
       }
+      // hex char (2)
       else if (re2.find(name)) {
+        std::string hstr = name.substr(2);
+
+        uint h;
+
+        CStrUtil::decodeHexString(hstr, &h);
+
+        CUtf8::append(value1, h);
+      }
+      // decimal char
+      else if (re3.find(name)) {
         std::string dstr = name.substr(1);
 
         long l;
 
         CStrUtil::toInteger(dstr, &l);
 
-        value1 += char(l);
+        CUtf8::append(value1, l);
       }
+      // named char
       else {
         CXMLNamedChar *named_char;
 
         if      (! CXMLNamedCharMgrInst->lookup(name, &named_char))
           value1 += value.substr(j, i - j + 1);
-        else if (named_char->value > 255)
-          value1 += value.substr(j, i - j + 1);
         else
-          value1 += char(named_char->value);
+          CUtf8::append(value1, named_char->value);
       }
 
       ++i;
@@ -817,14 +832,17 @@ replaceNamedChars(const std::string &value)
 
 bool
 CXMLParser::
-readText()
+readText(bool skipped)
 {
+  std::string str;
+
+  if (skipped)
+    str += " ";
+
   int c = readChar();
 
   if (c == EOF)
     return true;
-
-  std::string str;
 
   str += c;
 
@@ -834,12 +852,26 @@ readText()
     if (c == EOF)
       break;
 
-    str += c;
+    if (c == '\n' && ! tag_->getPreserveSpace()) {
+      str += ' ';
+
+      while (! isComment() && ! isTag()) {
+        c = readChar();
+
+        if (! isspace(c)) {
+          str += c;
+
+          break;
+        }
+      }
+    }
+    else
+      str += c;
   }
 
   //----
 
-  if (tag_ == 0) {
+  if (! tag_) {
     std::cerr << "Text with no current tag" << std::endl;
     return false;
   }
@@ -849,9 +881,18 @@ readText()
   std::string str1;
 
   if (! tag_->getPreserveSpace()) {
+    bool isSpace1 = (! str.empty() && isspace(str[0]));
+    bool isSpace2 = (! str.empty() && isspace(str[str.size() - 1]));
+
     str1 = CStrUtil::stripSpaces(str);
 
-    if (isTag()) str1 += " ";
+    if (isTag()) {
+      if (isSpace1)
+        str1 = " " + str1;
+
+      if (isSpace2)
+        str1 = str1 + " ";
+    }
   }
   else
     str1 = str;
@@ -909,17 +950,24 @@ matchString(const std::string &str)
   return true;
 }
 
-void
+bool
 CXMLParser::
 skipSpaces()
 {
+  bool skipped = false;
+
   int c = readChar();
 
-  while (c != EOF && isspace(c))
+  while (c != EOF && isspace(c)) {
     c = readChar();
+
+    skipped = true;
+  }
 
   if (c != EOF)
     unreadChar(c);
+
+  return skipped;
 }
 
 int
@@ -929,7 +977,7 @@ lookChar()
   if (buffer_.size() == 0) {
     int c = EOF;
 
-    if (file_ != 0)
+    if (file_)
       c = file_->getC();
 
     if (c == EOF)
@@ -946,7 +994,7 @@ CXMLParser::
 readChar()
 {
   if (buffer_.size() == 0) {
-    if (file_ != 0) {
+    if (file_) {
       int c = file_->getC();
 
       if (c == '\n') {

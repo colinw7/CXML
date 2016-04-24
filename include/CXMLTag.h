@@ -5,6 +5,7 @@
 
 class CXMLToken;
 
+#if 0
 class CXMLTagTokens {
  public:
   typedef std::vector<CXMLToken *> TokenArray;
@@ -21,9 +22,6 @@ class CXMLTagTokens {
 
   const TokenArray &tokens() const { return tokens_; }
 
-  //const_iterator begin() const { return tokens_.begin(); }
-  //const_iterator end  () const { return tokens_.end  (); }
-
   const CXMLToken *operator[](int i) const { return tokens_[i]; }
 
   void clear();
@@ -31,6 +29,7 @@ class CXMLTagTokens {
  private:
   TokenArray tokens_;
 };
+#endif
 
 //------
 
@@ -87,7 +86,7 @@ class CXMLTag {
 
   int getNumChildren() const { return children_.size(); }
 
-  TokenArray getChildren() const;
+  const TokenArray &getChildren() const { return children_; }
 
   const CXMLToken *getChild(int i) const { return children_[i]; }
 
@@ -122,13 +121,13 @@ class CXMLTag {
   CXMLTag &operator=(const CXMLTag &rhs);
 
  private:
-  CXMLTag       *parent_ { 0 };
-  std::string    name_;
-  OptionArray    options_;
-  CXMLTagTokens  children_;
-  bool           preserveSpace_ { false };
-  int            line_num_ { 1 };
-  int            char_num_ { 0 };
+  CXMLTag*    parent_ { 0 };
+  std::string name_;
+  OptionArray options_;
+  TokenArray  children_;
+  bool        preserveSpace_ { false };
+  int         line_num_ { 1 };
+  int         char_num_ { 0 };
 };
 
 #endif

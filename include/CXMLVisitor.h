@@ -23,7 +23,8 @@ class CXMLVisitor {
   virtual bool processTagChildText(CXMLText *) { return true; }
   virtual bool processTagEnd(CXMLTag *) { return true; }
 
-  ACCESSOR(Break, bool, brk)
+  ACCESSOR(Break     , bool, brk)
+  ACCESSOR(DepthFirst, bool, depthFirst)
 
  private:
   bool subProcess(CXMLTag *tag);
@@ -34,8 +35,9 @@ class CXMLVisitor {
   CXMLVisitor &operator=(const CXMLVisitor &rhs);
 
  private:
-  CXMLTag *tag_ { 0 };
-  bool     brk_ { false };
+  CXMLTag *tag_        { 0 };
+  bool     brk_        { false };
+  bool     depthFirst_ { true };
 };
 
 //------

@@ -36,13 +36,13 @@ class CXMLParser {
 
   std::string replaceNamedChars(const std::string &value);
 
-  bool readText();
+  bool readText(bool skipped=false);
 
   bool isNameFirstChar(int c);
   bool isNameChar(int c);
 
   bool matchString(const std::string &str);
-  void skipSpaces();
+  bool skipSpaces();
 
   int  lookChar();
   int  readChar();
@@ -58,13 +58,13 @@ class CXMLParser {
   CXMLParser &operator=(const CXMLParser &rhs);
 
  private:
-  CXML             &xml_;
-  CAutoPtr<CFile>   file_;
-  CXMLTag          *root_tag_ { 0 };
-  CXMLTag          *tag_ { 0 };
-  std::vector<int>  buffer_;
-  uint              line_num_ { 1 };
-  uint              char_num_ { 0 };
+  CXML&            xml_;
+  CAutoPtr<CFile>  file_;
+  CXMLTag*         root_tag_ { 0 };
+  CXMLTag*         tag_ { 0 };
+  std::vector<int> buffer_;
+  uint             line_num_ { 1 };
+  uint             char_num_ { 0 };
 };
 
 #endif

@@ -2,6 +2,7 @@
 #include <CXMLTag.h>
 #include <CXMLToken.h>
 #include <CXMLText.h>
+#include <CXMLNamedChar.h>
 #include <CStrUtil.h>
 #include <cassert>
 
@@ -52,16 +53,21 @@ subProcess(CXMLTag *tag)
   CXMLTag::TokenArray children = tag->getChildren();
 
   for (uint i = 0; i < children.size(); ++i) {
-    const CXMLToken *child_token = children[i];
+    const CXMLToken *childToken = children[i];
 
-    if      (child_token->isTag()) {
-      CXMLTag *child_tag = child_token->getTag();
+    if      (childToken->isTag()) {
+      CXMLTag *childTag = childToken->getTag();
 
-      if (! processTagChildTag(child_tag))
-        error(child_tag, "Unknown child tag " + child_tag->getName());
+      if (! processTagChildTag(childTag))
+        error(childTag, "Unknown child tag " + childTag->getName());
+
+      if (getDepthFirst()) {
+        if (! subProcess(childTag))
+          error(childTag, "Failed to process child tag " + childTag->getName());
+      }
     }
-    else if (child_token->isText()) {
-      CXMLText *text = child_token->getText();
+    else if (childToken->isText()) {
+      CXMLText *text = childToken->getText();
 
       (void) processTagChildText(text);
     }
@@ -72,18 +78,20 @@ subProcess(CXMLTag *tag)
 
   //------
 
-  for (uint i = 0; i < children.size(); ++i) {
-    const CXMLToken *child_token = children[i];
+  if (! getDepthFirst()) {
+    for (uint i = 0; i < children.size(); ++i) {
+      const CXMLToken *childToken = children[i];
 
-    if (child_token->isTag()) {
-      CXMLTag *child_tag = child_token->getTag();
+      if (childToken->isTag()) {
+        CXMLTag *childTag = childToken->getTag();
 
-      if (! subProcess(child_tag))
-        error(child_tag, "Failed to process child tag " + child_tag->getName());
+        if (! subProcess(childTag))
+          error(childTag, "Failed to process child tag " + childTag->getName());
+      }
+
+      if (getBreak())
+        return true;
     }
-
-    if (getBreak())
-      return true;
   }
 
   //------
@@ -159,7 +167,9 @@ processTagChildText(CXMLText *child_text)
   if (isShowText()) {
     prefix();
 
-    os_ << child_text->getText() << std::endl;
+    std::string text = CXMLNamedCharMgrInst->encodeString(child_text->getText());
+
+    os_ << text << std::endl;
   }
 
   return true;

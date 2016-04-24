@@ -1,4 +1,5 @@
 #include <CXMLLib.h>
+#include <CUtf8.h>
 #include <cstring>
 
 CXMLNamedChar
@@ -122,8 +123,7 @@ getInstance()
 }
 
 CXMLNamedCharMgr::
-CXMLNamedCharMgr() :
- name_value_map_(), value_name_map_()
+CXMLNamedCharMgr()
 {
   for (uint i = 1; i < num_named_chars_; ++i) {
     name_value_map_[named_chars_[i].name ] = &named_chars_[i];
@@ -161,9 +161,10 @@ lookup(int value, CXMLNamedChar **named_char) const
   return false;
 }
 
+// internal UTF8 string to XML test
 std::string
 CXMLNamedCharMgr::
-encodeString(const std::string &str) const
+encodeString(const std::string &str, bool printable) const
 {
   static const char *encode_chars = "<\'\"&";
 
@@ -171,18 +172,62 @@ encodeString(const std::string &str) const
 
   std::string str1;
 
-  uint len = str.size();
+  int pos = 0;
+  int len = str.size();
 
-  for (uint i = 0; i < len; ++i) {
-    if (strchr(encode_chars, str[i]) != 0) {
-      lookup(int(str[i]), &named_char);
+  while (pos < len) {
+    ulong l = CUtf8::readNextChar(str, pos);
 
-      str1 += "&";
-      str1 += named_char->name;
+    if (l <= 0x7f) {
+      uchar c = l;
+
+      if (strchr(encode_chars, c) != 0) {
+        lookup(int(c), &named_char);
+
+        str1 += "&";
+        str1 += named_char->name;
+        str1 += ";";
+      }
+      else if (! isprint(c) && printable) {
+        str1 += "&#";
+
+        int i1 = c/100;
+        int i2 = (c - i1*100)/10;
+        int i3 = c - i1*100 - i2*10;
+
+        if (i1 > 0) str1 += char('0' + i1);
+        if (i2 > 0) str1 += char('0' + i2);
+
+        str1 += ('0' + i3);
+
+        str1 += ";";
+      }
+      else
+        str1 += c;
+    }
+    else {
+      static char buffer[16];
+
+      str1 += "&#x";
+
+      int i1 = (l >> 16) & 0xFF;
+      int i2 = (l >> 8 ) & 0xFF;
+      int i3 =  l        & 0xFF;
+
+      std::string str2;
+
+      ::sprintf(buffer, "%02x", i1); str2 += buffer;
+      ::sprintf(buffer, "%02x", i2); str2 += buffer;
+      ::sprintf(buffer, "%02x", i3); str2 += buffer;
+
+      int j = 0;
+
+      while (str2[j] == '0')
+        ++j;
+
+      str1 += str2.substr(j);
       str1 += ";";
     }
-    else
-      str1 += str[i];
   }
 
   return str1;

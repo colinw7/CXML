@@ -25,7 +25,7 @@ class CXMLNamedCharMgr {
   bool lookup(const std::string &name, CXMLNamedChar **named_char) const;
   bool lookup(int value, CXMLNamedChar **named_char) const;
 
-  std::string encodeString(const std::string &str) const;
+  std::string encodeString(const std::string &str, bool printable=true) const;
 
  private:
   typedef std::map<std::string,CXMLNamedChar *> NameValueMap;
