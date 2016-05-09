@@ -210,15 +210,17 @@ encodeString(const std::string &str, bool printable) const
 
       str1 += "&#x";
 
-      int i1 = (l >> 16) & 0xFF;
-      int i2 = (l >> 8 ) & 0xFF;
-      int i3 =  l        & 0xFF;
+      int i1 = (l >> 24) & 0xFF;
+      int i2 = (l >> 16) & 0xFF;
+      int i3 = (l >> 8 ) & 0xFF;
+      int i4 =  l        & 0xFF;
 
       std::string str2;
 
       ::sprintf(buffer, "%02x", i1); str2 += buffer;
       ::sprintf(buffer, "%02x", i2); str2 += buffer;
       ::sprintf(buffer, "%02x", i3); str2 += buffer;
+      ::sprintf(buffer, "%02x", i4); str2 += buffer;
 
       int j = 0;
 

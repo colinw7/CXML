@@ -747,9 +747,10 @@ std::string
 CXMLParser::
 replaceNamedChars(const std::string &value)
 {
-  static CRegExp re1("#x[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]");
-  static CRegExp re2("#x[0-9a-fA-F][0-9a-fA-F]");
-  static CRegExp re3("#[0-9][0-9]*");
+  static CRegExp re1("#x[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]");
+  static CRegExp re2("#x[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]");
+  static CRegExp re3("#x[0-9a-fA-F][0-9a-fA-F]");
+  static CRegExp re4("#[0-9][0-9]*");
 
   std::string value1;
 
@@ -778,7 +779,7 @@ replaceNamedChars(const std::string &value)
 
       std::string name = value.substr(j + 1, len1);
 
-      // hex char (3)
+      // hex char (4)
       if      (re1.find(name)) {
         std::string hstr = name.substr(2);
 
@@ -788,7 +789,7 @@ replaceNamedChars(const std::string &value)
 
         CUtf8::append(value1, h);
       }
-      // hex char (2)
+      // hex char (3)
       else if (re2.find(name)) {
         std::string hstr = name.substr(2);
 
@@ -798,8 +799,18 @@ replaceNamedChars(const std::string &value)
 
         CUtf8::append(value1, h);
       }
-      // decimal char
+      // hex char (2)
       else if (re3.find(name)) {
+        std::string hstr = name.substr(2);
+
+        uint h;
+
+        CStrUtil::decodeHexString(hstr, &h);
+
+        CUtf8::append(value1, h);
+      }
+      // decimal char
+      else if (re4.find(name)) {
         std::string dstr = name.substr(1);
 
         long l;

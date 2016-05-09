@@ -32,6 +32,8 @@ class CXML {
 
   CXMLToken *getToken(uint i) const { return tokens_[i]; }
 
+  void clear();
+
   bool read(const std::string &filename, CXMLTag **tag);
 
   bool readString(const std::string &str, CXMLTag **tag);

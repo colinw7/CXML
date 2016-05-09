@@ -21,6 +21,13 @@ addToken(CXMLToken *token)
   tokens_.push_back(token);
 }
 
+void
+CXML::
+clear()
+{
+  tokens_.clear();
+}
+
 bool
 CXML::
 read(const std::string &filename, CXMLTag **tag)
