@@ -166,6 +166,29 @@ writeComment(CFile *file, const CXMLComment *comment, const std::string &prefix)
   file->write(CStrUtil::strprintf("%s%s\n", prefix.c_str(), comment->getString().c_str()));
 }
 
+//---
+
+void
+CXML::
+setEntity(const std::string &name, const std::string &value)
+{
+  entities_[name] = value;
+}
+
+bool
+CXML::
+getEntity(const std::string &name, std::string &value) const
+{
+  auto p = entities_.find(name);
+
+  if (p == entities_.end())
+    return false;
+
+  value = p->second;
+
+  return true;
+}
+
 //-------
 
 CXMLComment *

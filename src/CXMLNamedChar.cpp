@@ -161,7 +161,7 @@ lookup(int value, CXMLNamedChar **named_char) const
   return false;
 }
 
-// internal UTF8 string to XML test
+// internal UTF8 string to XML text
 std::string
 CXMLNamedCharMgr::
 encodeString(const std::string &str, bool printable) const
@@ -188,7 +188,7 @@ encodeString(const std::string &str, bool printable) const
         str1 += named_char->name;
         str1 += ";";
       }
-      else if (! isprint(c) && printable) {
+      else if (! isspace(c) && ! isprint(c) && printable) {
         str1 += "&#";
 
         int i1 = c/100;

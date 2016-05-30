@@ -148,7 +148,10 @@ readDocType()
         in_string1 = false;
     }
     else if (in_sbracket) {
-      if      (c == '"')
+      if      (isENTITY()) {
+        (void) readENTITY();
+      }
+      else if (c == '"')
         in_string1 = true;
       else if (c == ']')
         in_sbracket = false;
@@ -227,6 +230,71 @@ readCDATA()
 
   if (xml_.getDebug())
     std::cerr << "CDATA: " << str << std::endl;
+
+  return true;
+}
+
+bool
+CXMLParser::
+isENTITY()
+{
+  std::string str;
+
+  if (! matchString("<!ENTITY "))
+    return false;
+
+  unreadChars("<!ENTITY ");
+
+  return true;
+}
+
+bool
+CXMLParser::
+readENTITY()
+{
+  std::string str;
+
+  if (! matchString("<!ENTITY "))
+    return false;
+
+  int c = lookChar();
+
+  while (c != EOF) {
+    if (matchString(">")) {
+      break;
+    }
+
+    str += readChar();
+
+    c = lookChar();
+  }
+
+  if (c == EOF) {
+    unreadChars(str);
+
+    return false;
+  }
+
+  // entity is name "value"
+  CStrParse parse(str);
+
+  parse.skipSpace();
+
+  int pos = parse.getPos();
+
+  parse.skipNonSpace();
+
+  std::string name = parse.getBefore(pos);
+
+  parse.skipSpace();
+
+  std::string value;
+
+  if (parse.readString(value, /*strip_quotes*/true))
+    xml_.setEntity(name, value);
+
+  if (xml_.getDebug())
+    std::cerr << "<!ENTITY " << str << ">" << std::endl;
 
   return true;
 }
@@ -821,12 +889,15 @@ replaceNamedChars(const std::string &value)
       }
       // named char
       else {
+        std::string    value;
         CXMLNamedChar *named_char;
 
-        if      (! CXMLNamedCharMgrInst->lookup(name, &named_char))
-          value1 += value.substr(j, i - j + 1);
-        else
+        if      (CXMLNamedCharMgrInst->lookup(name, &named_char))
           CUtf8::append(value1, named_char->value);
+        else if (xml_.getEntity(name, value))
+          value1 += value;
+        else
+          value1 += value.substr(j, i - j + 1);
       }
 
       ++i;
@@ -863,7 +934,7 @@ readText(bool skipped)
     if (c == EOF)
       break;
 
-    if (c == '\n' && ! tag_->getPreserveSpace()) {
+    if (c == '\n' && tag_ && ! tag_->getPreserveSpace()) {
       str += ' ';
 
       while (! isComment() && ! isTag()) {

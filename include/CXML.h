@@ -3,6 +3,7 @@
 
 #include <CAutoPtr.h>
 #include <CXMLTag.h>
+#include <map>
 
 class CXMLComment;
 class CXMLTagOption;
@@ -48,6 +49,9 @@ class CXML {
   CXMLTagOption *createTagOption(const std::string &name, const std::string &value) const;
   CXMLText      *createText(const std::string &str) const;
 
+  void setEntity(const std::string &name, const std::string &value);
+  bool getEntity(const std::string &name, std::string &value) const;
+
  private:
   void writeToken  (CFile *file, const CXMLToken   *token  , const std::string &prefix);
   void writeTag    (CFile *file, const CXMLTag     *tag    , const std::string &prefix);
@@ -55,8 +59,11 @@ class CXML {
   void writeComment(CFile *file, const CXMLComment *comment, const std::string &prefix);
 
  private:
+  typedef std::map<std::string,std::string> Entities;
+
   CAutoPtr<CXMLFactory> factory_;
   TokenList             tokens_;
+  Entities              entities_;
   bool                  debug_ { false };
 };
 

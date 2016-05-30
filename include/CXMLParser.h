@@ -23,6 +23,9 @@ class CXMLParser {
   bool isCDATA();
   bool readCDATA();
 
+  bool isENTITY();
+  bool readENTITY();
+
   bool isComment();
   bool readComment();
 
