@@ -889,13 +889,13 @@ replaceNamedChars(const std::string &value)
       }
       // named char
       else {
-        std::string    value;
+        std::string    value2;
         CXMLNamedChar *named_char;
 
         if      (CXMLNamedCharMgrInst->lookup(name, &named_char))
           CUtf8::append(value1, named_char->value);
-        else if (xml_.getEntity(name, value))
-          value1 += value;
+        else if (xml_.getEntity(name, value2))
+          value1 += value2;
         else
           value1 += value.substr(j, i - j + 1);
       }
