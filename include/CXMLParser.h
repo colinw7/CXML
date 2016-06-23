@@ -14,6 +14,8 @@ class CXMLParser {
 
   bool readStringOptions(const std::string &str, CXMLTag::OptionArray &options);
 
+  std::string replaceNamedChars(const std::string &value);
+
  private:
   void readLoop();
 
@@ -36,8 +38,6 @@ class CXMLParser {
   bool isTag();
   bool readTag();
   bool readTagOptions(CXMLTag::OptionArray &options);
-
-  std::string replaceNamedChars(const std::string &value);
 
   bool readText(bool skipped=false);
 
