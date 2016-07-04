@@ -50,6 +50,8 @@ class CXMLParser {
   int  lookChar();
   int  readChar();
 
+  void fillBuffer();
+
   void unreadChars(const std::string &str);
   void unreadChar(int c);
 

@@ -6,7 +6,7 @@ main(int argc, char **argv)
 {
   std::vector<std::string> filenames;
 
-  bool        debug = false;
+  bool        debug   = false;
   bool        dump    = false;
   std::string find    = "";
   bool        single  = false;

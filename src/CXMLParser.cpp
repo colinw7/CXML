@@ -257,14 +257,25 @@ readENTITY()
   if (! matchString("<!ENTITY "))
     return false;
 
+  bool in_string1  = false;
+
   int c = lookChar();
 
   while (c != EOF) {
-    if (matchString(">")) {
-      break;
-    }
+    if      (in_string1) {
+      if (c == '"')
+        in_string1 = false;
 
-    str += readChar();
+      str += readChar();
+    }
+    else {
+      if      (c == '"')
+        in_string1 = true;
+      else if (c == '>')
+        break;
+
+      str += readChar();
+    }
 
     c = lookChar();
   }
@@ -1056,56 +1067,84 @@ int
 CXMLParser::
 lookChar()
 {
-  if (buffer_.size() == 0) {
-    int c = EOF;
+  if (buffer_.size() == 0)
+    fillBuffer();
 
-    if (file_)
-      c = file_->getC();
-
-    if (c == EOF)
-      return EOF;
-
-    buffer_.push_back(c);
-  }
-
-  return buffer_[buffer_.size() - 1];
+  if (buffer_.size() > 0)
+    return buffer_[buffer_.size() - 1];
+  else
+    return EOF;
 }
 
 int
 CXMLParser::
 readChar()
 {
-  if (buffer_.size() == 0) {
-    if (file_) {
-      int c = file_->getC();
+  if (buffer_.size() == 0)
+    fillBuffer();
 
-      if (c == '\n') {
-        ++line_num_;
+  if (buffer_.size() > 0) {
+    int c = buffer_[buffer_.size() - 1];
 
-        char_num_ = 0;
-      }
-      else
-        ++char_num_;
+    if (c == '\n') {
+      ++line_num_;
 
-      return c;
+      char_num_ = 0;
     }
     else
-      return EOF;
-  }
+      ++char_num_;
 
-  int c = buffer_[buffer_.size() - 1];
+    buffer_.pop_back();
 
-  if (c == '\n') {
-    ++line_num_;
-
-    char_num_ = 0;
+    return c;
   }
   else
-    ++char_num_;
+    return EOF;
+}
 
-  buffer_.pop_back();
+void
+CXMLParser::
+fillBuffer()
+{
+  int c = EOF;
 
-  return c;
+  if (file_)
+    c = file_->getC();
+
+  if (c == EOF)
+    return;
+
+  if (c == '&') {
+    std::string name;
+
+    c = file_->getC();
+
+    while (c != EOF && c != ';') {
+      name += char(c);
+
+      c = file_->getC();
+    }
+
+    std::string str;
+
+    if (c == ';') {
+      std::string value;
+
+      if (xml_.getEntity(name, value))
+        str = value;
+      else
+        str = "&" + name + ";";
+    }
+    else
+      str = "&" + name;
+
+    int len = str.size();
+
+    for (int i = len - 1; i >= 0; --i)
+      buffer_.push_back(str[i]);
+  }
+  else
+    buffer_.push_back(c);
 }
 
 void

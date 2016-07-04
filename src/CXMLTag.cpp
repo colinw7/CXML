@@ -8,6 +8,10 @@ CXMLTag(CXMLTag *parent, const std::string &name, const CXMLTag::OptionArray &op
   if (parent != 0)
     preserveSpace_ = parent->preserveSpace_;
 
+  // TODO: default preserveSpace values for tags
+  if (name == "script")
+    preserveSpace_ = true;
+
   uint num_options = options.size();
 
   for (uint i = 0; i < num_options; ++i) {
