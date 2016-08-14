@@ -190,10 +190,10 @@ isCDATA()
 {
   std::string str;
 
-  if (! matchString("<!CDATA["))
+  if (! matchString("<![CDATA["))
     return false;
 
-  unreadChars("<!CDATA[");
+  unreadChars("<![CDATA[");
 
   return true;
 }
@@ -204,10 +204,10 @@ readCDATA()
 {
   std::string str;
 
-  if (! matchString("<!CDATA["))
+  if (! matchString("<![CDATA["))
     return false;
 
-  str += "<!CDATA[";
+  str += "<![CDATA[";
 
   int c = lookChar();
 
@@ -227,6 +227,19 @@ readCDATA()
 
     return false;
   }
+
+  //---
+
+  if (! tag_) {
+    std::cerr << "CDATA with no current tag" << std::endl;
+    return false;
+  }
+
+  CXMLText *text = xml_.createText(str);
+
+  new CXMLTextToken(tag_, text);
+
+  //---
 
   if (xml_.getDebug())
     std::cerr << "CDATA: " << str << std::endl;

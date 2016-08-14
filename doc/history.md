@@ -6,3 +6,6 @@
 
 ### 6/23/2016
  + Make replaceNamedChars public
+
+### 8/14/2106
+ + Fix CDATA parsing and store result in text
