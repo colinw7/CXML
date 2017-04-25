@@ -93,7 +93,7 @@ write(const std::string &filename, const CXMLTag *tag)
 {
   CFile file(filename);
 
-  if (! file.open(CFileBase::WRITE))
+  if (! file.open(CFileBase::Mode::WRITE))
     return false;
 
   writeTag(&file, tag, "");
