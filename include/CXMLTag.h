@@ -65,7 +65,7 @@ class CXMLTag {
  public:
   CXMLTag(CXMLTag *parent, const std::string &name, const OptionArray &options);
 
-  virtual ~CXMLTag() { }
+  virtual ~CXMLTag();
 
   CXMLTag *getParent() const { return parent_; }
 

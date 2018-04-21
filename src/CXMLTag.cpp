@@ -31,6 +31,13 @@ CXMLTag(CXMLTag *parent, const std::string &name, const CXMLTag::OptionArray &op
   }
 }
 
+CXMLTag::
+~CXMLTag()
+{
+  for (auto &child : children_)
+    delete child;
+}
+
 int
 CXMLTag::
 getDepth() const
@@ -54,19 +61,15 @@ getText(bool recurse) const
 {
   std::string str;
 
-  uint num_children = getNumChildren();
-
-  for (uint i = 0; i < num_children; ++i) {
-    const CXMLToken *token = getChild(i);
-
-    if      (token->isText()) {
-      CXMLText *text = token->getText();
+  for (auto &child : children_) {
+    if      (child->isText()) {
+      CXMLText *text = child->getText();
 
       str += text->getText();
     }
-    else if (token->isTag()) {
+    else if (child->isTag()) {
       if (recurse) {
-        CXMLTag *tag = token->getTag();
+        CXMLTag *tag = child->getTag();
 
         str += tag->getText();
       }
