@@ -3,6 +3,7 @@
 
 #include <accessor.h>
 #include <COptVal.h>
+#include <vector>
 
 class CXMLTag;
 class CXMLTagOption;
