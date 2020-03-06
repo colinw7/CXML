@@ -1,9 +1,10 @@
 #ifndef CXML_H
 #define CXML_H
 
-#include <CAutoPtr.h>
 #include <CXMLTag.h>
 #include <map>
+#include <set>
+#include <memory>
 
 class CXMLComment;
 class CXMLTagOption;
@@ -22,8 +23,12 @@ class CXML {
   void setDebug(bool debug) { debug_ = debug; }
   bool getDebug() const { return debug_; }
 
-  CXMLFactory *getFactory() const { return factory_; }
+  CXMLFactory *getFactory() const { return factory_.get(); }
   void setFactory(CXMLFactory *factory);
+
+  bool isPreserveSpaceTag(const std::string &name) const {
+    return preserveSpaceTags_.find(name) != preserveSpaceTags_.end(); }
+  void addPreserveSpaceTag(const std::string &name) { preserveSpaceTags_.insert(name); }
 
   void addToken(CXMLToken *token);
 
@@ -43,11 +48,11 @@ class CXML {
 
   bool find(CXMLTag *tag, const std::string &def, std::string &value);
 
-  CXMLComment   *createComment(const std::string &str) const;
+  CXMLComment   *createComment(CXMLTag *tag, const std::string &str) const;
   CXMLTag       *createTag(CXMLTag *parent, const std::string &name,
                            CXMLTag::OptionArray &options) const;
   CXMLTagOption *createTagOption(const std::string &name, const std::string &value) const;
-  CXMLText      *createText(const std::string &str) const;
+  CXMLText      *createText(CXMLTag *tag, const std::string &str) const;
 
   void setEntity(const std::string &name, const std::string &value);
   bool getEntity(const std::string &name, std::string &value) const;
@@ -59,12 +64,15 @@ class CXML {
   void writeComment(CFile *file, const CXMLComment *comment, const std::string &prefix);
 
  private:
-  typedef std::map<std::string,std::string> Entities;
+  using Entities          = std::map<std::string,std::string>;
+  using FactoryP          = std::unique_ptr<CXMLFactory>;
+  using PreserveSpaceTags = std::set<std::string>;
 
-  CAutoPtr<CXMLFactory> factory_;
-  TokenList             tokens_;
-  Entities              entities_;
-  bool                  debug_ { false };
+  FactoryP          factory_;
+  TokenList         tokens_;
+  Entities          entities_;
+  PreserveSpaceTags preserveSpaceTags_;
+  bool              debug_ { false };
 };
 
 //------
@@ -75,11 +83,11 @@ class CXMLFactory {
 
   virtual ~CXMLFactory() { }
 
-  virtual CXMLComment   *createComment(const std::string &str);
-  virtual CXMLTag       *createTag(CXMLTag *parent, const std::string &name,
+  virtual CXMLComment   *createComment(CXMLTag *xml, const std::string &str);
+  virtual CXMLTag       *createTag(const CXML *xml, CXMLTag *parent, const std::string &name,
                                    CXMLTag::OptionArray &options);
   virtual CXMLTagOption *createTagOption(const std::string &name, const std::string &value);
-  virtual CXMLText      *createText(const std::string &str);
+  virtual CXMLText      *createText(CXMLTag *tag, const std::string &str);
 };
 
 #endif

@@ -1,4 +1,4 @@
-#include <CXMLLib.h>
+#include <CXMLExecute.h>
 
 CXMLExecute::
 CXMLExecute(const std::string &id) :

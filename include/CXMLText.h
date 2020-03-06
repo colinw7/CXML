@@ -1,9 +1,15 @@
 #ifndef CXML_TEXT_H
 #define CXML_TEXT_H
 
+#include <string>
+
+class CXMLTag;
+
 class CXMLText {
  public:
-  CXMLText(const std::string &text);
+  CXMLText(CXMLTag *tag, const std::string &text);
+
+  CXMLTag *tag() const { return tag_; }
 
   const std::string &getText() const { return text_; }
 
@@ -12,6 +18,7 @@ class CXMLText {
   friend std::ostream &operator<<(std::ostream &os, const CXMLText &text);
 
  private:
+  CXMLTag*    tag_ { nullptr };
   std::string text_;
 };
 

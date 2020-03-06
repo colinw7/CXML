@@ -1,6 +1,9 @@
 #ifndef CXML_TOKEN_H
 #define CXML_TOKEN_H
 
+#include <iostream>
+
+class CXMLTag;
 class CXMLComment;
 class CXMLText;
 class CXMLExecute;

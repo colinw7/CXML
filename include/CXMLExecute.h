@@ -1,6 +1,9 @@
 #ifndef CXML_EXECUTE_H
 #define CXML_EXECUTE_H
 
+#include <string>
+#include <vector>
+
 class CXMLExecute {
  public:
   class Option {

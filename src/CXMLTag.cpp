@@ -1,15 +1,25 @@
-#include <CXMLLib.h>
+#include <CXMLTag.h>
+#include <CXML.h>
+#include <CXMLToken.h>
+#include <CXMLText.h>
+#include <CXMLVisitor.h>
+
 #include <algorithm>
+#include <iostream>
 
 CXMLTag::
-CXMLTag(CXMLTag *parent, const std::string &name, const CXMLTag::OptionArray &options) :
+CXMLTag(const CXML *xml, CXMLTag *parent, const std::string &name,
+        const CXMLTag::OptionArray &options) :
  parent_(parent), name_(name)
 {
   if (parent != 0)
     preserveSpace_ = parent->preserveSpace_;
 
   // TODO: default preserveSpace values for tags
-  if (name == "script")
+//if (name == "script")
+//  preserveSpace_ = true;
+
+  if (xml->isPreserveSpaceTag(name))
     preserveSpace_ = true;
 
   uint num_options = options.size();

@@ -2,7 +2,9 @@
 #define CXML_TAG_H
 
 #include <vector>
+#include <string>
 
+class CXML;
 class CXMLToken;
 
 #if 0
@@ -63,7 +65,7 @@ class CXMLTag {
   typedef std::vector<CXMLToken *>     TokenArray;
 
  public:
-  CXMLTag(CXMLTag *parent, const std::string &name, const OptionArray &options);
+  CXMLTag(const CXML *xml, CXMLTag *parent, const std::string &name, const OptionArray &options);
 
   virtual ~CXMLTag();
 

@@ -1,8 +1,9 @@
-#include <CXMLLib.h>
+#include <CXMLText.h>
+#include <CXMLNamedChar.h>
 
 CXMLText::
-CXMLText(const std::string &text) :
- text_(text)
+CXMLText(CXMLTag *tag, const std::string &text) :
+ tag_(tag), text_(text)
 {
 }
 

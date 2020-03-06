@@ -1,7 +1,12 @@
 #ifndef CXML_PARSER_H
 #define CXML_PARSER_H
 
-#include <CAutoPtr.h>
+#include <CXMLTag.h>
+#include <CFile.h>
+#include <string>
+#include <memory>
+
+class CXML;
 
 class CXMLParser {
  public:
@@ -63,8 +68,10 @@ class CXMLParser {
   CXMLParser &operator=(const CXMLParser &rhs);
 
  private:
+  using FileP = std::unique_ptr<CFile>;
+
   CXML&            xml_;
-  CAutoPtr<CFile>  file_;
+  FileP            file_;
   CXMLTag*         root_tag_ { 0 };
   CXMLTag*         tag_ { 0 };
   std::vector<int> buffer_;

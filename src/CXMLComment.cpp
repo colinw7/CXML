@@ -1,8 +1,8 @@
-#include <CXMLLib.h>
+#include <CXMLComment.h>
 
 CXMLComment::
-CXMLComment(const std::string &str) :
- str_(str)
+CXMLComment(CXMLTag *tag, const std::string &str) :
+ tag_(tag), str_(str)
 {
 }
 

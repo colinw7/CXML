@@ -1,4 +1,8 @@
-#include <CXMLLib.h>
+#include <CXMLToken.h>
+#include <CXMLTag.h>
+#include <CXMLComment.h>
+#include <CXMLText.h>
+#include <CXMLExecute.h>
 #include <CStrUtil.h>
 
 CXMLToken::

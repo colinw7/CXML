@@ -1,4 +1,4 @@
-#include <CXMLLib.h>
+#include <CXMLNamedChar.h>
 #include <CUtf8.h>
 #include <cstring>
 

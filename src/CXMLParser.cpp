@@ -1,4 +1,9 @@
-#include <CXMLLib.h>
+#include <CXMLParser.h>
+#include <CXML.h>
+#include <CXMLToken.h>
+#include <CXMLExecute.h>
+#include <CXMLNamedChar.h>
+
 #include <CRegExp.h>
 #include <CStrParse.h>
 #include <CStrUtil.h>
@@ -29,7 +34,7 @@ read(const std::string &filename, CXMLTag **tag)
   root_tag_ = 0;
   tag_      = 0;
 
-  file_ = new CFile(filename);
+  file_ = std::make_unique<CFile>(filename);
 
   readLoop();
 
@@ -235,7 +240,7 @@ readCDATA()
     return false;
   }
 
-  CXMLText *text = xml_.createText(str);
+  CXMLText *text = xml_.createText(tag_, str);
 
   new CXMLTextToken(tag_, text);
 
@@ -369,8 +374,8 @@ readComment()
     return false;
   }
 
-  if (tag_ != 0) {
-    CXMLComment *comment = xml_.createComment(str);
+  if (tag_) {
+    CXMLComment *comment = xml_.createComment(tag_, str);
 
     new CXMLCommentToken(tag_, comment);
   }
@@ -839,10 +844,14 @@ std::string
 CXMLParser::
 replaceNamedChars(const std::string &value)
 {
-  static CRegExp re1("#x[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]");
-  static CRegExp re2("#x[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]");
-  static CRegExp re3("#x[0-9a-fA-F][0-9a-fA-F]");
-  static CRegExp re4("#[0-9][0-9]*");
+  static CRegExp *re1, *re2, *re3, *re4;
+
+  if (! re1) {
+    re1 = new CRegExp("#x[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]");
+    re2 = new CRegExp("#x[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]");
+    re3 = new CRegExp("#x[0-9a-fA-F][0-9a-fA-F]");
+    re4 = new CRegExp("#[0-9][0-9]*");
+  }
 
   std::string value1;
 
@@ -872,7 +881,7 @@ replaceNamedChars(const std::string &value)
       std::string name = value.substr(j + 1, len1);
 
       // hex char (4)
-      if      (re1.find(name)) {
+      if      (re1->find(name)) {
         std::string hstr = name.substr(2);
 
         uint h;
@@ -882,7 +891,7 @@ replaceNamedChars(const std::string &value)
         CUtf8::append(value1, h);
       }
       // hex char (3)
-      else if (re2.find(name)) {
+      else if (re2->find(name)) {
         std::string hstr = name.substr(2);
 
         uint h;
@@ -892,7 +901,7 @@ replaceNamedChars(const std::string &value)
         CUtf8::append(value1, h);
       }
       // hex char (2)
-      else if (re3.find(name)) {
+      else if (re3->find(name)) {
         std::string hstr = name.substr(2);
 
         uint h;
@@ -902,7 +911,7 @@ replaceNamedChars(const std::string &value)
         CUtf8::append(value1, h);
       }
       // decimal char
-      else if (re4.find(name)) {
+      else if (re4->find(name)) {
         std::string dstr = name.substr(1);
 
         long l;
@@ -1010,7 +1019,7 @@ readText(bool skipped)
 
   str1 = replaceNamedChars(str1);
 
-  CXMLText *text = xml_.createText(str1);
+  CXMLText *text = xml_.createText(tag_, str1);
 
   new CXMLTextToken(tag_, text);
 
