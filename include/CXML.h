@@ -15,7 +15,7 @@ class CFile;
 
 class CXML {
  public:
-  typedef std::vector<CXMLToken *> TokenList;
+  using TokenList = std::vector<CXMLToken *>;
 
  public:
   CXML();

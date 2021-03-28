@@ -28,8 +28,8 @@ class CXMLNamedCharMgr {
   std::string encodeString(const std::string &str, bool printable=true) const;
 
  private:
-  typedef std::map<std::string,CXMLNamedChar *> NameValueMap;
-  typedef std::map<int        ,CXMLNamedChar *> ValueNameMap;
+  using NameValueMap = std::map<std::string,CXMLNamedChar *>;
+  using ValueNameMap = std::map<int        ,CXMLNamedChar *>;
 
  private:
   static CXMLNamedChar named_chars_[];

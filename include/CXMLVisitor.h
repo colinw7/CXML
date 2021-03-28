@@ -76,7 +76,7 @@ class CXMLPrintVisitor : public CXMLVisitor {
 
 class CXMLFindVisitor : public CXMLVisitor {
  public:
-  typedef std::vector<std::string> Strings;
+  using Strings = std::vector<std::string>;
 
  public:
   CXMLFindVisitor(CXMLTag *tag, const std::string &match);

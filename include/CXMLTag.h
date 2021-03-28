@@ -10,9 +10,9 @@ class CXMLToken;
 #if 0
 class CXMLTagTokens {
  public:
-  typedef std::vector<CXMLToken *> TokenArray;
+  using TokenArray = std::vector<CXMLToken *>;
 
-  //typedef TokenArray::const_iterator const_iterator;
+  //using const_iterator = TokenArray::const_iterator;
 
  public:
   CXMLTagTokens();
@@ -59,10 +59,11 @@ class CXMLTagOption {
 
 //------
 
+// XML tag with options and token children
 class CXMLTag {
  public:
-  typedef std::vector<CXMLTagOption *> OptionArray;
-  typedef std::vector<CXMLToken *>     TokenArray;
+  using OptionArray = std::vector<CXMLTagOption *>;
+  using TokenArray  = std::vector<CXMLToken *>;
 
  public:
   CXMLTag(const CXML *xml, CXMLTag *parent, const std::string &name, const OptionArray &options);

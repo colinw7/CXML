@@ -36,7 +36,7 @@ class CXMLExecute {
   friend std::ostream &operator<<(std::ostream &os, const CXMLExecute &exec);
 
  private:
-  typedef std::vector<Option> OptionList;
+  using OptionList = std::vector<Option>;
 
   std::string id_;
   OptionList  options_;
