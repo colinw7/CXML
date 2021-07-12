@@ -31,14 +31,14 @@ read(const std::string &filename, CXMLTag **tag)
     return false;
   }
 
-  root_tag_ = 0;
-  tag_      = 0;
+  root_tag_ = nullptr;
+  tag_      = nullptr;
 
   file_ = std::make_unique<CFile>(filename);
 
   readLoop();
 
-  file_ = 0;
+  file_ = nullptr;
 
   if (lookChar() != EOF)
     return false;
@@ -54,10 +54,10 @@ readString(const std::string &str, CXMLTag **tag)
 {
   unreadChars(str);
 
-  root_tag_ = 0;
-  tag_      = 0;
+  root_tag_ = nullptr;
+  tag_      = nullptr;
 
-  file_ = 0;
+  file_ = nullptr;
 
   readLoop();
 
@@ -184,7 +184,7 @@ readDocType()
   str += readChar();
 
   if (xml_.getDebug())
-    std::cerr << "Doc Type: " << str << std::endl;
+    std::cerr << "Doc Type: " << str << "\n";
 
   return true;
 }
@@ -236,7 +236,7 @@ readCDATA()
   //---
 
   if (! tag_) {
-    std::cerr << "CDATA with no current tag" << std::endl;
+    std::cerr << "CDATA with no current tag\n";
     return false;
   }
 
@@ -247,7 +247,7 @@ readCDATA()
   //---
 
   if (xml_.getDebug())
-    std::cerr << "CDATA: " << str << std::endl;
+    std::cerr << "CDATA: " << str << "\n";
 
   return true;
 }
@@ -323,7 +323,7 @@ readENTITY()
     xml_.setEntity(name, value);
 
   if (xml_.getDebug())
-    std::cerr << "<!ENTITY " << str << ">" << std::endl;
+    std::cerr << "<!ENTITY " << str << ">\n";
 
   return true;
 }
@@ -381,7 +381,7 @@ readComment()
   }
 
   if (xml_.getDebug())
-    std::cerr << "Comment: " << str << std::endl;
+    std::cerr << "Comment: " << str << "\n";
 
   return true;
 }
@@ -430,7 +430,7 @@ readExecute()
   }
 
   if (xml_.getDebug())
-    std::cerr << "Execute: " << (lhs + data + rhs) << std::endl;
+    std::cerr << "Execute: " << (lhs + data + rhs) << "\n";
 
   //------
 
@@ -547,11 +547,8 @@ parseExecute(const std::string &str)
         if (c == '\"')
           parse.skipChar();
       }
-      else {
-        parseError("Invalid option format");
-
-        return false;
-      }
+      else
+        return parseError("Invalid option format");
     }
 
     //------
@@ -567,7 +564,7 @@ parseExecute(const std::string &str)
   }
 
   if (xml_.getDebug())
-    std::cerr << std::endl;
+    std::cerr << "\n";
 
   CXMLExecuteToken *token = new CXMLExecuteToken(0, exec);
 
@@ -706,7 +703,7 @@ readTag()
       if (! root_tag_)
         root_tag_ = tag;
       else
-        std::cerr << "Multiple root tags" << std::endl;
+        std::cerr << "Multiple root tags\n";
     }
 
     if (! auto_close)
@@ -715,17 +712,15 @@ readTag()
     //------
 
     if (xml_.getDebug())
-      std::cerr << "Tag: " << *tag << std::endl;
+      std::cerr << "Tag: " << *tag << "\n";
   }
   else {
     const std::string &name1 = tag_->getName();
 
-    if (name1 != name) {
-      parseError("Start end tag mismatch <" + name + "> </" + name1 + ">");
-      return false;
-    }
-    else
-      tag_ = tag_->getParent();
+    if (name1 != name)
+      return parseError("Start end tag mismatch <" + name + "> </" + name1 + ">");
+
+    tag_ = tag_->getParent();
   }
 
   return true;
@@ -832,7 +827,7 @@ readTagOptions(CXMLTag::OptionArray &options)
     CXMLTagOption *option = xml_.createTagOption(name, value);
 
     if (xml_.getDebug())
-      std::cerr << "Option: " << name << "=\"" << value << "\"" << std::endl;
+      std::cerr << "Option: " << name << "=\"" << value << "\"\n";
 
     options.push_back(option);
   }
@@ -986,10 +981,8 @@ readText(bool skipped)
 
   //----
 
-  if (! tag_) {
-    std::cerr << "Text with no current tag" << std::endl;
-    return false;
-  }
+  if (! tag_)
+    return parseError("Text with no current tag");
 
   //----
 
@@ -1024,7 +1017,7 @@ readText(bool skipped)
   new CXMLTextToken(tag_, text);
 
   if (xml_.getDebug())
-    std::cerr << "Text: >" << str << "<" << std::endl;
+    std::cerr << "Text: >" << str << "<\n";
 
   return true;
 }
@@ -1112,9 +1105,14 @@ readChar()
       ++line_num_;
 
       char_num_ = 0;
+
+      line_ = "";
     }
-    else
+    else {
+      line_ += c;
+
       ++char_num_;
+    }
 
     buffer_.pop_back();
 
@@ -1177,6 +1175,8 @@ unreadChars(const std::string &str)
     if (str[i] == '\n') {
       --line_num_;
 
+      line_ = "";
+
       char_num_ = 256;
     }
     else
@@ -1190,15 +1190,20 @@ void
 CXMLParser::
 unreadChar(int c)
 {
-  if (c == '\n')
+  if (c == '\n') {
     --line_num_;
+
+    line_ = "";
+
+    char_num_ = 256;
+  }
   else
     --char_num_;
 
   buffer_.push_back(c);
 }
 
-void
+bool
 CXMLParser::
 parseError(const char *fmt, ...)
 {
@@ -1206,15 +1211,45 @@ parseError(const char *fmt, ...)
 
   va_start(vargs, fmt);
 
-  std::cerr << line_num_ << ":" << char_num_ << "> ";
-  std::cerr << CStrUtil::vstrprintf(fmt, &vargs) << std::endl;
+  std::cerr << "error: " << CStrUtil::vstrprintf(fmt, &vargs) << "\n";
 
   va_end(vargs);
+
+  outputLineChar();
+
+  return false;
+}
+
+bool
+CXMLParser::
+parseError(const std::string &str)
+{
+  std::cerr << "error: " << str << "\n";
+
+  outputLineChar();
+
+  return false;
 }
 
 void
 CXMLParser::
-parseError(const std::string &str)
+outputLineChar()
 {
-  std::cerr << line_num_ << ":" << char_num_ << "> " << str << std::endl;
+  uint ll = line_.size();
+
+  std::cerr << "  " << line_ << " (" << line_num_ << ":" << char_num_ << ")\n";
+
+  uint i = 0;
+
+  std::cerr << "  ";
+
+  for ( ; i < char_num_ && i < ll; ++i)
+    std::cerr << " ";
+
+  std::cerr << "^";
+
+  for ( ; i < ll; ++i)
+    std::cerr << " ";
+
+  std::cerr << "\n";
 }
