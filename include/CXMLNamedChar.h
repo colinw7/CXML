@@ -1,15 +1,16 @@
 #ifndef CXML_NAMED_CHAR_H
 #define CXML_NAMED_CHAR_H
 
+#include <string>
 #include <map>
 
 #define CXMLNamedCharMgrInst CXMLNamedCharMgr::getInstance()
 
 struct CXMLNamedChar {
-  const char *name;
-  uint        value;
+  const char   *name;
+  unsigned int  value;
 
-  CXMLNamedChar(const char *name, uint value) :
+  CXMLNamedChar(const char *name, unsigned int value) :
    name(name), value(value) {
   }
 };
@@ -33,7 +34,7 @@ class CXMLNamedCharMgr {
 
  private:
   static CXMLNamedChar named_chars_[];
-  static uint          num_named_chars_;
+  static unsigned int  num_named_chars_;
 
   NameValueMap name_value_map_;
   ValueNameMap value_name_map_;

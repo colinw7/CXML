@@ -50,13 +50,13 @@ subProcess(CXMLTag *tag)
 
   //------
 
-  CXMLTag::TokenArray children = tag->getChildren();
+  auto children = tag->getChildren();
 
   for (uint i = 0; i < children.size(); ++i) {
-    const CXMLToken *childToken = children[i];
+    const auto *childToken = children[i];
 
     if      (childToken->isTag()) {
-      CXMLTag *childTag = childToken->getTag();
+      auto *childTag = childToken->getTag();
 
       if (! processTagChildTag(childTag))
         error(childTag, "Unknown child tag " + childTag->getName());
@@ -67,7 +67,7 @@ subProcess(CXMLTag *tag)
       }
     }
     else if (childToken->isText()) {
-      CXMLText *text = childToken->getText();
+      auto *text = childToken->getText();
 
       (void) processTagChildText(text);
     }
@@ -80,10 +80,10 @@ subProcess(CXMLTag *tag)
 
   if (! getDepthFirst()) {
     for (uint i = 0; i < children.size(); ++i) {
-      const CXMLToken *childToken = children[i];
+      const auto *childToken = children[i];
 
       if (childToken->isTag()) {
-        CXMLTag *childTag = childToken->getTag();
+        auto *childTag = childToken->getTag();
 
         if (! subProcess(childTag))
           error(childTag, "Failed to process child tag " + childTag->getName());
@@ -110,7 +110,7 @@ error(CXMLTag *tag, const std::string &msg) const
   tag->getLocation(&line_num, &char_num);
 
   std::cerr << "Tag<" << tag->getName() << "> " << line_num << ":" << char_num << ") " <<
-               msg << std::endl;
+               msg << "\n";
 }
 
 //-------------------
@@ -146,7 +146,7 @@ bool
 CXMLPrintVisitor::
 processTagOptionsEnd(CXMLTag *)
 {
-  os_ << ">" << std::endl;
+  os_ << ">\n";
 
   ++depth_;
 
@@ -169,7 +169,7 @@ processTagChildText(CXMLText *child_text)
 
     std::string text = CXMLNamedCharMgrInst->encodeString(child_text->getText());
 
-    os_ << text << std::endl;
+    os_ << text << "\n";
   }
 
   return true;
@@ -184,7 +184,7 @@ processTagEnd(CXMLTag *tag)
 
   prefix();
 
-  os_ << "</" << tag->getName() << ">" << std::endl;
+  os_ << "</" << tag->getName() << ">\n";
 
   return true;
 }

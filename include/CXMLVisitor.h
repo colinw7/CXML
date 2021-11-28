@@ -36,7 +36,7 @@ class CXMLVisitor {
   CXMLVisitor &operator=(const CXMLVisitor &rhs);
 
  private:
-  CXMLTag *tag_        { 0 };
+  CXMLTag *tag_        { nullptr };
   bool     brk_        { false };
   bool     depthFirst_ { true };
 };
@@ -47,7 +47,7 @@ class CXMLPrintVisitor : public CXMLVisitor {
  public:
   CXMLPrintVisitor(std::ostream &os, CXMLTag *tag);
 
- ~CXMLPrintVisitor() { }
+  virtual ~CXMLPrintVisitor() { }
 
   bool isShowOptions() const { return showOptions_; }
   void setShowOptions(bool b) { showOptions_ = b; }
@@ -56,18 +56,18 @@ class CXMLPrintVisitor : public CXMLVisitor {
   void setShowText(bool b) { showText_ = b; }
 
  private:
-  bool processTagStart(CXMLTag *tag);
-  bool processTagOption(CXMLTagOption *opt);
-  bool processTagOptionsEnd(CXMLTag *tag);
-  bool processTagChildTag(CXMLTag *child_tag);
-  bool processTagChildText(CXMLText *child_text);
-  bool processTagEnd(CXMLTag *tag);
+  bool processTagStart(CXMLTag *tag) override;
+  bool processTagOption(CXMLTagOption *opt) override;
+  bool processTagOptionsEnd(CXMLTag *tag) override;
+  bool processTagChildTag(CXMLTag *child_tag) override;
+  bool processTagChildText(CXMLText *child_text) override;
+  bool processTagEnd(CXMLTag *tag) override;
 
   void prefix();
 
  private:
   std::ostream &os_;
-  uint          depth_ { 0 };
+  uint          depth_       { 0 };
   bool          showOptions_ { true };
   bool          showText_    { true };
 };
@@ -81,7 +81,7 @@ class CXMLFindVisitor : public CXMLVisitor {
  public:
   CXMLFindVisitor(CXMLTag *tag, const std::string &match);
 
- ~CXMLFindVisitor() { }
+  virtual ~CXMLFindVisitor() { }
 
   const std::string &match() const { return match_; }
   void setMatch(const std::string &s);
@@ -95,12 +95,12 @@ class CXMLFindVisitor : public CXMLVisitor {
  private:
   void initMatch();
 
-  bool processTagStart(CXMLTag *tag);
-  bool processTagOption(CXMLTagOption *opt);
-  bool processTagOptionsEnd(CXMLTag *tag);
-  bool processTagChildTag(CXMLTag *child_tag);
-  bool processTagChildText(CXMLText *child_text);
-  bool processTagEnd(CXMLTag *tag);
+  bool processTagStart(CXMLTag *tag) override;
+  bool processTagOption(CXMLTagOption *opt) override;
+  bool processTagOptionsEnd(CXMLTag *tag) override;
+  bool processTagChildTag(CXMLTag *child_tag) override;
+  bool processTagChildText(CXMLText *child_text) override;
+  bool processTagEnd(CXMLTag *tag) override;
 
   bool matchTag() const;
   bool matchOption(const std::string &optionStr) const;
@@ -111,7 +111,7 @@ class CXMLFindVisitor : public CXMLVisitor {
   Strings     matchFields_;
   Strings     matchOptions_;
   bool        matchHasOption_ { false };
-  bool        singleMatch_ { false };
+  bool        singleMatch_    { false };
   Strings     tagFields_;
   Strings     results_;
 };
