@@ -9,7 +9,12 @@ OBJ_DIR = ../obj
 LIB_DIR = ../lib
 BIN_DIR = ../bin
 
-all: $(LIB_DIR)/libCXML.a
+all: dirs $(LIB_DIR)/libCXML.a
+
+dirs:
+	@if [ ! -e ../obj ]; then mkdir ../obj; fi
+	@if [ ! -e ../lib ]; then mkdir ../lib; fi
+	@if [ ! -e ../bin ]; then mkdir ../bin; fi
 
 SRC = \
 CXMLComment.cpp \
