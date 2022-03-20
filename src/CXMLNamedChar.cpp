@@ -126,8 +126,8 @@ CXMLNamedCharMgr::
 CXMLNamedCharMgr()
 {
   for (uint i = 1; i < num_named_chars_; ++i) {
-    name_value_map_[named_chars_[i].name ] = &named_chars_[i];
-    value_name_map_[named_chars_[i].value] = &named_chars_[i];
+    name_value_map_[named_chars_[i].name      ] = &named_chars_[i];
+    value_name_map_[int(named_chars_[i].value)] = &named_chars_[i];
   }
 }
 
@@ -173,13 +173,13 @@ encodeString(const std::string &str, bool printable) const
   std::string str1;
 
   int pos = 0;
-  int len = str.size();
+  int len = int(str.size());
 
   while (pos < len) {
     ulong l = CUtf8::readNextChar(str, pos);
 
     if (l <= 0x7f) {
-      uchar c = l;
+      uchar c = uchar(l);
 
       if (strchr(encode_chars, c) != 0) {
         lookup(int(c), &named_char);
@@ -198,12 +198,12 @@ encodeString(const std::string &str, bool printable) const
         if (i1 > 0) str1 += char('0' + i1);
         if (i2 > 0) str1 += char('0' + i2);
 
-        str1 += ('0' + i3);
+        str1 += char('0' + i3);
 
         str1 += ";";
       }
       else
-        str1 += c;
+        str1 += char(c);
     }
     else {
       static char buffer[16];
@@ -222,7 +222,7 @@ encodeString(const std::string &str, bool printable) const
       ::sprintf(buffer, "%02x", i3); str2 += buffer;
       ::sprintf(buffer, "%02x", i4); str2 += buffer;
 
-      int j = 0;
+      size_t j = 0;
 
       while (str2[j] == '0')
         ++j;

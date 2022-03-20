@@ -1,6 +1,7 @@
 #ifndef CXML_TAG_H
 #define CXML_TAG_H
 
+#include <CSafeIndex.h>
 #include <vector>
 #include <string>
 
@@ -76,22 +77,22 @@ class CXMLTag {
 
   //---
 
-  int getNumOptions() const { return options_.size(); }
+  size_t getNumOptions() const { return options_.size(); }
 
   const OptionArray &getOptions() const { return options_; }
 
   //OptionArray::iterator getOptionsBegin() { return options_.begin(); }
   //OptionArray::iterator getOptionsEnd  () { return options_.end  (); }
 
-  const CXMLTagOption *getOption(int i) const { return options_[i]; }
+  const CXMLTagOption *getOption(int i) const { return CUtil::safeIndex(options_, i); }
 
   //---
 
-  int getNumChildren() const { return children_.size(); }
+  size_t getNumChildren() const { return children_.size(); }
 
   const TokenArray &getChildren() const { return children_; }
 
-  const CXMLToken *getChild(int i) const { return children_[i]; }
+  const CXMLToken *getChild(int i) const { return CUtil::safeIndex(children_, i); }
 
   //---
 

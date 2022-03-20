@@ -22,9 +22,9 @@ CXMLTag(const CXML *xml, CXMLTag *parent, const std::string &name,
   if (xml->isPreserveSpaceTag(name))
     preserveSpace_ = true;
 
-  uint num_options = options.size();
+  auto num_options = options.size();
 
-  for (uint i = 0; i < num_options; ++i) {
+  for (size_t i = 0; i < num_options; ++i) {
     if      (options[i]->getName() == "xml:space") {
       if      (options[i]->getValue() == "preserve")
         preserveSpace_ = true;
@@ -109,19 +109,19 @@ void
 CXMLTag::
 print(std::ostream &os) const
 {
-  int num_options = getNumOptions();
+  auto num_options = getNumOptions();
 
   os << "<" << name_;
 
-  for (int i = 0; i < num_options; ++i)
+  for (int i = 0; i < int(num_options); ++i)
     os << " " << getOption(i)->getName () << "=\"" << getOption(i)->getValue() << "\"";
 
-  int num_children = getNumChildren();
+  auto num_children = getNumChildren();
 
   if (num_children > 0) {
     os << ">";
 
-    for (int i = 0; i < num_children; ++i)
+    for (int i = 0; i < int(num_children); ++i)
       os << std::endl << "  " << *getChild(i);
 
     os << std::endl << "</" << name_ << ">";

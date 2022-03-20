@@ -2,6 +2,7 @@
 #define CXML_H
 
 #include <CXMLTag.h>
+#include <CSafeIndex.h>
 #include <map>
 #include <set>
 #include <memory>
@@ -34,9 +35,9 @@ class CXML {
 
   const TokenList &getTokens() const { return tokens_; }
 
-  uint getNumTokens() const { return tokens_.size(); }
+  size_t getNumTokens() const { return tokens_.size(); }
 
-  CXMLToken *getToken(uint i) const { return tokens_[i]; }
+  CXMLToken *getToken(uint i) const { return CUtil::safeIndex(tokens_, i); }
 
   void clear();
 

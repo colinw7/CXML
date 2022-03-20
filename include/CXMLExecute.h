@@ -27,7 +27,7 @@ class CXMLExecute {
 
   void addOption(const std::string &name, const std::string &value);
 
-  uint getNumOptions() const { return options_.size(); }
+  size_t getNumOptions() const { return options_.size(); }
 
   const Option &getOption(uint i) const { return options_[i]; }
 

@@ -170,7 +170,7 @@ readDocType()
         break;
     }
 
-    str += readChar();
+    str += char(readChar());
 
     c = lookChar();
   }
@@ -181,7 +181,7 @@ readDocType()
     return false;
   }
 
-  str += readChar();
+  str += char(readChar());
 
   if (xml_.getDebug())
     std::cerr << "Doc Type: " << str << "\n";
@@ -222,7 +222,7 @@ readCDATA()
       break;
     }
 
-    str += readChar();
+    str += char(readChar());
 
     c = lookChar();
   }
@@ -284,7 +284,7 @@ readENTITY()
       if (c == '"')
         in_string1 = false;
 
-      str += readChar();
+      str += char(readChar());
     }
     else {
       if      (c == '"')
@@ -292,7 +292,7 @@ readENTITY()
       else if (c == '>')
         break;
 
-      str += readChar();
+      str += char(readChar());
     }
 
     c = lookChar();
@@ -309,7 +309,7 @@ readENTITY()
 
   parse.skipSpace();
 
-  int pos = parse.getPos();
+  auto pos = parse.getPos();
 
   parse.skipNonSpace();
 
@@ -363,7 +363,7 @@ readComment()
       break;
     }
 
-    str += readChar();
+    str += char(readChar());
 
     c = lookChar();
   }
@@ -418,7 +418,7 @@ readExecute()
     if (matchString("?>"))
       break;
 
-    data += readChar();
+    data += char(readChar());
 
     c = lookChar();
   }
@@ -584,12 +584,12 @@ isTag()
 
   std::string str;
 
-  str += readChar();
+  str += char(readChar());
 
   c = lookChar();
 
   if (c == '/')
-    str += readChar();
+    str += char(readChar());
 
   c = lookChar();
 
@@ -641,12 +641,12 @@ readTag()
 
   std::string name;
 
-  name += c;
+  name += char(c);
 
   c = readChar();
 
   while (c != EOF && isNameChar(c)) {
-    name += c;
+    name += char(c);
 
     c = readChar();
   }
@@ -695,7 +695,7 @@ readTag()
   if (! end_tag) {
     CXMLTag *tag = xml_.createTag(tag_, name, options);
 
-    tag->setLocation(line_num_, char_num_);
+    tag->setLocation(int(line_num_), int(char_num_));
 
     new CXMLTagToken(tag_, tag);
 
@@ -747,7 +747,7 @@ readTagOptions(CXMLTag::OptionArray &options)
     c = readChar();
 
     while (c != EOF && isNameChar(c)) {
-      name += c;
+      name += char(c);
 
       c = readChar();
     }
@@ -782,7 +782,7 @@ readTagOptions(CXMLTag::OptionArray &options)
           if (c == '\'')
             break;
 
-          value += c;
+          value += char(c);
 
           c = readChar();
         }
@@ -797,7 +797,7 @@ readTagOptions(CXMLTag::OptionArray &options)
           if (c == '\"')
             break;
 
-          value += c;
+          value += char(c);
 
           c = readChar();
         }
@@ -851,7 +851,7 @@ replaceNamedChars(const std::string &value)
   std::string value1;
 
   uint i   = 0;
-  uint len = value.size();
+  uint len = uint(value.size());
 
   while (i < len) {
     char c = value[i];
@@ -913,7 +913,7 @@ replaceNamedChars(const std::string &value)
 
         CStrUtil::toInteger(dstr, &l);
 
-        CUtf8::append(value1, l);
+        CUtf8::append(value1, ulong(l));
       }
       // named char
       else {
@@ -931,7 +931,7 @@ replaceNamedChars(const std::string &value)
       ++i;
     }
     else {
-      value1 += c;
+      value1 += char(c);
 
       ++i;
     }
@@ -954,7 +954,7 @@ readText(bool skipped)
   if (c == EOF)
     return true;
 
-  str += c;
+  str += char(c);
 
   while (! isComment() && ! isTag()) {
     c = readChar();
@@ -969,14 +969,14 @@ readText(bool skipped)
         c = readChar();
 
         if (! isspace(c)) {
-          str += c;
+          str += char(c);
 
           break;
         }
       }
     }
     else
-      str += c;
+      str += char(c);
   }
 
   //----
@@ -1017,7 +1017,7 @@ readText(bool skipped)
   new CXMLTextToken(tag_, text);
 
   if (xml_.getDebug())
-    std::cerr << "Text: >" << str << "<\n";
+    std::cerr << "Text: >" << str1 << "<\n";
 
   return true;
 }
@@ -1042,9 +1042,9 @@ matchString(const std::string &str)
 {
   std::string str1;
 
-  int len = str.size();
+  auto len = str.size();
 
-  for (int i = 0; i < len; ++i) {
+  for (size_t i = 0; i < len; ++i) {
     int c = lookChar();
 
     if (c != str[i]) {
@@ -1052,7 +1052,7 @@ matchString(const std::string &str)
       return false;
     }
 
-    str1 += readChar();
+    str1 += char(readChar());
   }
 
   return true;
@@ -1109,7 +1109,7 @@ readChar()
       line_ = "";
     }
     else {
-      line_ += c;
+      line_ += char(c);
 
       ++char_num_;
     }
@@ -1158,10 +1158,10 @@ fillBuffer()
     else
       str = "&" + name;
 
-    int len = str.size();
+    auto len = str.size();
 
-    for (int i = len - 1; i >= 0; --i)
-      buffer_.push_back(str[i]);
+    for (int i = int(len - 1); i >= 0; --i)
+      buffer_.push_back(str[size_t(i)]);
   }
   else
     buffer_.push_back(c);
@@ -1171,8 +1171,8 @@ void
 CXMLParser::
 unreadChars(const std::string &str)
 {
-  for (int i = str.size() - 1; i >= 0; --i) {
-    if (str[i] == '\n') {
+  for (int i = int(str.size() - 1); i >= 0; --i) {
+    if (str[size_t(i)] == '\n') {
       --line_num_;
 
       line_ = "";
@@ -1182,7 +1182,7 @@ unreadChars(const std::string &str)
     else
       --char_num_;
 
-    buffer_.push_back(str[i]);
+    buffer_.push_back(str[size_t(i)]);
   }
 }
 
@@ -1235,7 +1235,7 @@ void
 CXMLParser::
 outputLineChar()
 {
-  uint ll = line_.size();
+  uint ll = uint(line_.size());
 
   std::cerr << "  " << line_ << " (" << line_num_ << ":" << char_num_ << ")\n";
 

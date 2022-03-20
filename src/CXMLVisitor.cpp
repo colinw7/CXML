@@ -226,12 +226,12 @@ initMatch()
 
   CStrUtil::addFields(match_, matchFields_, "/");
 
-  int n = matchFields_.size();
+  auto n = matchFields_.size();
 
   if (n > 0) {
-    const std::string &lf = matchFields_[n - 1];
+    const std::string &lf = matchFields_[size_t(n - 1)];
 
-    int l = lf.length();
+    auto l = lf.length();
 
     if (l > 0 && lf[0] == '<' && lf[l - 1] == '>') {
       matchHasOption_ = true;
@@ -361,9 +361,9 @@ matchOption(const std::string &optionStr) const
 
   bool match = false;
 
-  int no = matchOptions_.size();
+  auto no = matchOptions_.size();
 
-  for (int i = 0; i < no; ++i) {
+  for (size_t i = 0; i < no; ++i) {
     if (matchOptions_[i] == "*" || matchOptions_[i] == optionStr) {
       match = true;
       break;
@@ -380,12 +380,12 @@ bool
 CXMLFindVisitor::
 matchTagFields() const
 {
-  int nt = tagFields_  .size();
-  int nm = matchFields_.size();
+  auto nt = tagFields_  .size();
+  auto nm = matchFields_.size();
 
-  int j = 0;
+  size_t j = 0;
 
-  for (int i = 0; i < nt; ++i) {
+  for (size_t i = 0; i < nt; ++i) {
     if (j >= nm)
       return false;
 

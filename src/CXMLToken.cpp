@@ -38,7 +38,7 @@ void
 CXMLCommentToken::
 print(std::ostream &os) const
 {
-  int depth = ptag_->getDepth();
+  uint depth = uint(ptag_->getDepth());
 
   std::string pad = CStrUtil::duplicate("  ", depth);
 
@@ -57,7 +57,7 @@ void
 CXMLTagToken::
 print(std::ostream &os) const
 {
-  int depth = ptag_->getDepth();
+  auto depth = uint(ptag_->getDepth());
 
   std::string pad = CStrUtil::duplicate("  ", depth);
 
@@ -76,7 +76,7 @@ void
 CXMLTextToken::
 print(std::ostream &os) const
 {
-  int depth = ptag_->getDepth();
+  auto depth = uint(ptag_->getDepth());
 
   std::string pad = CStrUtil::duplicate("  ", depth);
 
@@ -95,7 +95,7 @@ void
 CXMLExecuteToken::
 print(std::ostream &os) const
 {
-  int depth = ptag_->getDepth();
+  auto depth = uint(ptag_->getDepth());
 
   std::string pad = CStrUtil::duplicate("  ", depth);
 
