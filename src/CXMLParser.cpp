@@ -437,7 +437,6 @@ readExecute()
   return parseExecute(data);
 }
 
-
 bool
 CXMLParser::
 parseExecute(const std::string &str)
