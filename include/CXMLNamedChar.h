@@ -10,8 +10,8 @@ struct CXMLNamedChar {
   const char   *name;
   unsigned int  value;
 
-  CXMLNamedChar(const char *name, unsigned int value) :
-   name(name), value(value) {
+  CXMLNamedChar(const char *name1, unsigned int value1) :
+   name(name1), value(value1) {
   }
 };
 
