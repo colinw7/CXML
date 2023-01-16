@@ -44,7 +44,7 @@ class CXMLToken {
   CXMLToken &operator=(const CXMLToken &rhs);
 
  protected:
-  CXMLTag *ptag_ { 0 };
+  CXMLTag *ptag_ { nullptr };
   Type     type_ { CXML_TOKEN_NONE };
 };
 
@@ -54,16 +54,16 @@ class CXMLCommentToken : public CXMLToken {
  public:
   CXMLCommentToken(CXMLTag *ptag, CXMLComment *comment);
 
-  CXMLComment *getComment() const { return comment_; }
+  CXMLComment *getComment() const override { return comment_; }
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os) const override;
 
  private:
   CXMLCommentToken(const CXMLCommentToken &rhs);
   CXMLCommentToken &operator=(const CXMLCommentToken &rhs);
 
  private:
-  CXMLComment *comment_ { 0 };
+  CXMLComment *comment_ { nullptr };
 };
 
 //------
@@ -72,16 +72,16 @@ class CXMLTagToken : public CXMLToken {
  public:
   CXMLTagToken(CXMLTag *ptag, CXMLTag *tag);
 
-  CXMLTag *getTag() const { return tag_; }
+  CXMLTag *getTag() const override { return tag_; }
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os) const override;
 
  private:
   CXMLTagToken(const CXMLTagToken &rhs);
   CXMLTagToken &operator=(const CXMLTagToken &rhs);
 
  private:
-  CXMLTag *tag_ { 0 };
+  CXMLTag *tag_ { nullptr };
 };
 
 //------
@@ -90,16 +90,16 @@ class CXMLTextToken : public CXMLToken {
  public:
   CXMLTextToken(CXMLTag *ptag, CXMLText *text);
 
-  CXMLText *getText() const { return text_; }
+  CXMLText *getText() const override { return text_; }
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os) const override;
 
  private:
   CXMLTextToken(const CXMLTextToken &rhs);
   CXMLTextToken &operator=(const CXMLTextToken &rhs);
 
  private:
-  CXMLText *text_ { 0 };
+  CXMLText *text_ { nullptr };
 };
 
 //------
@@ -108,16 +108,16 @@ class CXMLExecuteToken : public CXMLToken {
  public:
   CXMLExecuteToken(CXMLTag *ptag, CXMLExecute *exec);
 
-  CXMLExecute *getExecute() const { return exec_; }
+  CXMLExecute *getExecute() const override { return exec_; }
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os) const override;
 
  private:
   CXMLExecuteToken(const CXMLExecuteToken &rhs);
   CXMLExecuteToken &operator=(const CXMLExecuteToken &rhs);
 
  private:
-  CXMLExecute *exec_ { 0 };
+  CXMLExecute *exec_ { nullptr };
 };
 
 #endif
