@@ -470,7 +470,7 @@ parseExecute(const std::string &str)
   if (xml_.getDebug())
     std::cerr << "Execute: " << id;
 
-  CXMLExecute *exec = new CXMLExecute(id);
+  auto *exec = new CXMLExecute(id);
 
   while (! parse.eof()) {
     parse.skipSpace();
@@ -565,7 +565,7 @@ parseExecute(const std::string &str)
   if (xml_.getDebug())
     std::cerr << "\n";
 
-  CXMLExecuteToken *token = new CXMLExecuteToken(0, exec);
+  auto *token = new CXMLExecuteToken(nullptr, exec);
 
   xml_.addToken(token);
 

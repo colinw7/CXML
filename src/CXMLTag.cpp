@@ -12,7 +12,7 @@ CXMLTag(const CXML *xml, CXMLTag *parent, const std::string &name,
         const CXMLTag::OptionArray &options) :
  parent_(parent), name_(name)
 {
-  if (parent != 0)
+  if (parent)
     preserveSpace_ = parent->preserveSpace_;
 
   // TODO: default preserveSpace values for tags
@@ -56,7 +56,7 @@ getDepth() const
 
   const CXMLTag *tag = this;
 
-  while (tag->parent_ != 0) {
+  while (tag->parent_) {
     ++depth;
 
     tag = tag->parent_;

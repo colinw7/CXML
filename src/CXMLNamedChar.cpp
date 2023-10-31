@@ -114,9 +114,9 @@ CXMLNamedCharMgr *
 CXMLNamedCharMgr::
 getInstance()
 {
-  static CXMLNamedCharMgr *instance_ = 0;
+  static CXMLNamedCharMgr *instance_ = nullptr;
 
-  if (instance_ == 0)
+  if (! instance_)
     instance_ = new CXMLNamedCharMgr();
 
   return instance_;
@@ -181,7 +181,7 @@ encodeString(const std::string &str, bool printable) const
     if (l <= 0x7f) {
       uchar c = uchar(l);
 
-      if (strchr(encode_chars, c) != 0) {
+      if (strchr(encode_chars, c) != nullptr) {
         lookup(int(c), &named_char);
 
         str1 += "&";

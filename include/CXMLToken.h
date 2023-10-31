@@ -30,10 +30,10 @@ class CXMLToken {
   bool isText   () const { return type_ == CXML_TOKEN_TEXT   ; }
   bool isExecute() const { return type_ == CXML_TOKEN_EXECUTE; }
 
-  virtual CXMLComment *getComment() const { return 0; }
-  virtual CXMLTag     *getTag    () const { return 0; }
-  virtual CXMLText    *getText   () const { return 0; }
-  virtual CXMLExecute *getExecute() const { return 0; }
+  virtual CXMLComment *getComment() const { return nullptr; }
+  virtual CXMLTag     *getTag    () const { return nullptr; }
+  virtual CXMLText    *getText   () const { return nullptr; }
+  virtual CXMLExecute *getExecute() const { return nullptr; }
 
   virtual void print(std::ostream &os) const = 0;
 
