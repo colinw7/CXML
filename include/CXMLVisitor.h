@@ -2,8 +2,8 @@
 #define CXML_VISITOR_H
 
 #include <accessor.h>
-#include <COptVal.h>
 #include <vector>
+#include <string>
 
 class CXMLTag;
 class CXMLTagOption;
