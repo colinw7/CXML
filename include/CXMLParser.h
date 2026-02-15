@@ -15,6 +15,8 @@ class CXMLParser {
 
   bool read(const std::string &filename, CXMLTag **tag);
 
+  bool read(CFile *file, CXMLTag **tag);
+
   bool readString(const std::string &str, CXMLTag **tag);
 
   bool readStringOptions(const std::string &str, CXMLTag::OptionArray &options);
@@ -52,8 +54,8 @@ class CXMLParser {
   bool matchString(const std::string &str);
   bool skipSpaces();
 
-  int  lookChar();
-  int  readChar();
+  int lookChar();
+  int readChar();
 
   void fillBuffer();
 

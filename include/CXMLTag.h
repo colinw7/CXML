@@ -94,6 +94,8 @@ class CXMLTag {
 
   const CXMLToken *getChild(int i) const { return CUtil::safeIndex(children_, i); }
 
+  size_t getNumTagChildren() const;
+
   //---
 
   bool getPreserveSpace() const { return preserveSpace_; }

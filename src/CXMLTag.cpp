@@ -32,7 +32,7 @@ CXMLTag(const CXML *xml, CXMLTag *parent, const std::string &name,
                options[i]->getValue() == "")
         preserveSpace_ = false;
       else
-        std::cerr << "Invalid value " << options[i]->getValue() << "for xml:space" << std::endl;
+        std::cerr << "Invalid value " << options[i]->getValue() << "for xml:space\n";
     }
     else if (options[i]->getName() == "xml:lang")
       ;
@@ -46,6 +46,20 @@ CXMLTag::
 {
   for (auto &child : children_)
     delete child;
+}
+
+size_t
+CXMLTag::
+getNumTagChildren() const
+{
+  size_t n { 0 };
+
+  for (auto &child : children_) {
+    if (child->isTag())
+      ++n;
+  }
+
+  return n;
 }
 
 int
@@ -122,9 +136,9 @@ print(std::ostream &os) const
     os << ">";
 
     for (int i = 0; i < int(num_children); ++i)
-      os << std::endl << "  " << *getChild(i);
+      os << "\n  " << *getChild(i);
 
-    os << std::endl << "</" << name_ << ">";
+    os << "\n</" << name_ << ">";
   }
   else
     os << "/>";

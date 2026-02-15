@@ -50,6 +50,27 @@ read(const std::string &filename, CXMLTag **tag)
 
 bool
 CXMLParser::
+read(CFile *file, CXMLTag **tag)
+{
+  root_tag_ = nullptr;
+  tag_      = nullptr;
+
+  file_ = std::make_unique<CFile>(file->getFP(), file->getOpenMode());
+
+  readLoop();
+
+  file_ = nullptr;
+
+  if (lookChar() != EOF)
+    return false;
+
+  *tag = root_tag_;
+
+  return true;
+}
+
+bool
+CXMLParser::
 readString(const std::string &str, CXMLTag **tag)
 {
   unreadChars(str);

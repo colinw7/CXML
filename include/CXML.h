@@ -43,6 +43,8 @@ class CXML {
 
   bool read(const std::string &filename, CXMLTag **tag);
 
+  bool read(CFile *file, CXMLTag **tag);
+
   bool readString(const std::string &str, CXMLTag **tag);
 
   bool write(const std::string &filename, const CXMLTag *tag);

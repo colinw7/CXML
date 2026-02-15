@@ -48,6 +48,17 @@ read(const std::string &filename, CXMLTag **tag)
 
 bool
 CXML::
+read(CFile *file, CXMLTag **tag)
+{
+  CXMLParser parser(*this);
+
+  bool flag = parser.read(file, tag);
+
+  return flag;
+}
+
+bool
+CXML::
 readString(const std::string &str, CXMLTag **tag)
 {
   CXMLParser parser(*this);
