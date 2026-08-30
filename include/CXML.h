@@ -16,7 +16,7 @@ class CFile;
 
 class CXML {
  public:
-  using TokenList = std::vector<CXMLToken *>;
+  using TokenArray = std::vector<CXMLToken *>;
 
  public:
   CXML();
@@ -33,7 +33,7 @@ class CXML {
 
   void addToken(CXMLToken *token);
 
-  const TokenList &getTokens() const { return tokens_; }
+  const TokenArray &getTokens() const { return tokens_; }
 
   size_t getNumTokens() const { return tokens_.size(); }
 
@@ -60,6 +60,12 @@ class CXML {
   void setEntity(const std::string &name, const std::string &value);
   bool getEntity(const std::string &name, std::string &value) const;
 
+  uint nextTagInd() const { return ++nextTagInd_; }
+
+  CXMLTag *getTagByInd(uint ind) const;
+
+  void addTag(CXMLTag *tag);
+
  private:
   void writeToken  (CFile *file, const CXMLToken   *token  , const std::string &prefix);
   void writeTag    (CFile *file, const CXMLTag     *tag    , const std::string &prefix);
@@ -70,12 +76,15 @@ class CXML {
   using Entities          = std::map<std::string,std::string>;
   using FactoryP          = std::unique_ptr<CXMLFactory>;
   using PreserveSpaceTags = std::set<std::string>;
+  using IndTag            = std::map<uint, CXMLTag *>;
 
   FactoryP          factory_;
-  TokenList         tokens_;
+  TokenArray        tokens_;
   Entities          entities_;
   PreserveSpaceTags preserveSpaceTags_;
   bool              debug_ { false };
+  mutable uint      nextTagInd_ { 0 };
+  IndTag            indTag_;
 };
 
 //------

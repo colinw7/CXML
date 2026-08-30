@@ -32,7 +32,7 @@ main(int argc, char **argv)
       else if (strcmp(&argv[i][1], "notext") == 0)
         text = false;
       else
-        std::cerr << "Invalid option: " << argv[i] << std::endl;
+        std::cerr << "Invalid option: " << argv[i] << "\n";
     }
     else
       filenames.push_back(argv[i]);
@@ -49,11 +49,11 @@ main(int argc, char **argv)
       continue;
 
     if (dump) {
-      std::cout << "-------------" << std::endl;
+      std::cout << "-------------\n";
 
-      std::cout << *tag << std::endl;
+      std::cout << *tag << "\n";
 
-      std::cout << "-------------" << std::endl;
+      std::cout << "-------------\n";
     }
 
     if (find != "") {
@@ -65,10 +65,10 @@ main(int argc, char **argv)
 
       if (visitor.find(results)) {
         for (const auto &r : results)
-          std::cout << r << std::endl;
+          std::cout << r << "\n";
       }
       else
-        std::cout << "Not found" << std::endl;
+        std::cout << "Not found\n";
     }
     else {
       CXMLPrintVisitor visitor(std::cout, tag);
@@ -80,6 +80,6 @@ main(int argc, char **argv)
     }
 
     if (dump)
-      std::cout << "-------------" << std::endl;
+      std::cout << "-------------\n";
   }
 }

@@ -75,6 +75,8 @@ find(CXMLTag *tag, const std::string &def, std::string &value)
   return tag->find(def, value);
 }
 
+//---
+
 CXMLComment *
 CXML::
 createComment(CXMLTag *tag, const std::string &str) const
@@ -103,6 +105,27 @@ createText(CXMLTag *tag, const std::string &str) const
   return factory_->createText(tag, str);
 }
 
+//---
+
+void
+CXML::
+addTag(CXMLTag *tag)
+{
+  tag->setInd(nextTagInd());
+
+  indTag_[tag->ind()] = tag;
+}
+
+CXMLTag *
+CXML::
+getTagByInd(uint ind) const
+{
+  auto p = indTag_.find(ind);
+  if (p == indTag_.end()) return nullptr;
+
+  return (*p).second;
+}
+
 //-------
 
 bool
@@ -124,17 +147,17 @@ CXML::
 writeToken(CFile *file, const CXMLToken *token, const std::string &prefix)
 {
   if      (token->isTag()) {
-    CXMLTag *child_tag = token->getTag();
+    auto *child_tag = token->getTag();
 
     writeTag(file, child_tag, prefix);
   }
   else if (token->isText()) {
-    CXMLText *child_text = token->getText();
+    auto *child_text = token->getText();
 
     writeText(file, child_text, prefix);
   }
   else if (token->isComment()) {
-    CXMLComment *comment = token->getComment();
+    auto *comment = token->getComment();
 
     writeComment(file, comment, prefix);
   }
@@ -149,7 +172,7 @@ writeTag(CFile *file, const CXMLTag *tag, const std::string &prefix)
   for (const auto &o : tag->getOptions())
     file->write(CStrUtil::strprintf(" %s=\"%s\"", o->getName().c_str(), o->getValue().c_str()));
 
-  CXMLTag::TokenArray children = tag->getChildren();
+  auto children = tag->getChildren();
 
   if (! children.empty()) {
     file->write(">\n");
@@ -157,7 +180,7 @@ writeTag(CFile *file, const CXMLTag *tag, const std::string &prefix)
     std::string prefix1 = prefix + "  ";
 
     for (uint i = 0; i < children.size(); ++i) {
-      const CXMLToken *child_token = children[i];
+      const auto *child_token = children[i];
 
       writeToken(file, child_token, prefix1);
     }

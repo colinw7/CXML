@@ -75,6 +75,9 @@ class CXMLTag {
 
   const std::string &getName() const { return name_; }
 
+  const uint &ind() const { return ind_; }
+  void setInd(const uint &i) { ind_ = i; }
+
   //---
 
   size_t getNumOptions() const { return options_.size(); }
@@ -129,6 +132,7 @@ class CXMLTag {
  private:
   CXMLTag*    parent_ { 0 };
   std::string name_;
+  uint        ind_ { 0 };
   OptionArray options_;
   TokenArray  children_;
   bool        preserveSpace_ { false };

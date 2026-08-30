@@ -713,7 +713,9 @@ readTag()
   //------
 
   if (! end_tag) {
-    CXMLTag *tag = xml_.createTag(tag_, name, options);
+    auto *tag = xml_.createTag(tag_, name, options);
+
+    xml_.addTag(tag);
 
     tag->setLocation(int(line_num_), int(char_num_));
 
