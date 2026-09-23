@@ -3,7 +3,9 @@
 
 #include <CXMLTag.h>
 #include <CFile.h>
+
 #include <string>
+#include <deque>
 #include <memory>
 
 class CXML;
@@ -62,6 +64,8 @@ class CXMLParser {
   void unreadChars(const std::string &str);
   void unreadChar(int c);
 
+  void addStringToBuffer(const std::string &str);
+
   bool parseError(const char *fmt, ...);
   bool parseError(const std::string &str);
 
@@ -78,7 +82,7 @@ class CXMLParser {
   FileP            file_;
   CXMLTag*         root_tag_ { 0 };
   CXMLTag*         tag_ { 0 };
-  std::vector<int> buffer_;
+  std::deque<char> buffer_;
   uint             line_num_ { 1 };
   uint             char_num_ { 0 };
   std::string      line_;

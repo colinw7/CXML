@@ -73,7 +73,7 @@ bool
 CXMLParser::
 readString(const std::string &str, CXMLTag **tag)
 {
-  unreadChars(str);
+  addStringToBuffer(str);
 
   root_tag_ = nullptr;
   tag_      = nullptr;
@@ -94,7 +94,7 @@ bool
 CXMLParser::
 readStringOptions(const std::string &str, CXMLTag::OptionArray &options)
 {
-  unreadChars(str);
+  addStringToBuffer(str);
 
   return readTagOptions(options);
 }
@@ -396,7 +396,7 @@ readComment()
   }
 
   if (tag_) {
-    CXMLComment *comment = xml_.createComment(tag_, str);
+    auto *comment = xml_.createComment(tag_, str);
 
     new CXMLCommentToken(tag_, comment);
   }
@@ -737,12 +737,14 @@ readTag()
       std::cerr << "Tag: " << *tag << "\n";
   }
   else {
-    const std::string &name1 = tag_->getName();
+    if (tag_) {
+      const std::string &name1 = tag_->getName();
 
-    if (name1 != name)
-      return parseError("Start end tag mismatch <" + name + "> </" + name1 + ">");
+      if (name1 != name)
+        return parseError("Start end tag mismatch <" + name + "> </" + name1 + ">");
 
-    tag_ = tag_->getParent();
+      tag_ = tag_->getParent();
+    }
   }
 
   return true;
@@ -1186,7 +1188,7 @@ fillBuffer()
       buffer_.push_back(str[size_t(i)]);
   }
   else
-    buffer_.push_back(c);
+    buffer_.push_back(char(c));
 }
 
 void
@@ -1210,6 +1212,14 @@ unreadChars(const std::string &str)
 
 void
 CXMLParser::
+addStringToBuffer(const std::string &str)
+{
+  for (int i = int(str.size() - 1); i >= 0; --i)
+    buffer_.push_back(str[size_t(i)]);
+}
+
+void
+CXMLParser::
 unreadChar(int c)
 {
   if (c == '\n') {
@@ -1222,7 +1232,7 @@ unreadChar(int c)
   else
     --char_num_;
 
-  buffer_.push_back(c);
+  buffer_.push_back(char(c));
 }
 
 bool
